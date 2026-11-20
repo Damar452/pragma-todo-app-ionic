@@ -1,7 +1,7 @@
 import { Component, inject } from '@angular/core';
 import { IonApp, IonRouterOutlet, Platform } from '@ionic/angular';
 
-import { hideSplashScreen } from './core/platform/splash-screen';
+import { hideSplashScreen } from '@core/platform/splash-screen';
 
 @Component({
   selector: 'app-root',
