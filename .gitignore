@@ -77,7 +77,6 @@ Thumbs.db
 
 # Local tooling
 .atl/
-*.apk
 /.angular
 /platforms
 /plugins

@@ -2,13 +2,23 @@
 
 Aplicación de tareas con persistencia local para Android, construida con Ionic, Angular y Cordova. Permite crear, completar y eliminar tareas, organizarlas con **categorías** (crear, editar, eliminar, asignar y filtrar) y activar o desactivar la función de categorías en caliente mediante un **feature flag de Firebase Remote Config**. Prueba técnica para Pragma.
 
+## Evidencias
+
+> 📦 **Entregables listos para evaluar** en la carpeta [`Evidencias de funcionamiento/`](Evidencias%20de%20funcionamiento/):
+
+| Archivo                                                                                             | Qué es                                                                                                                           |
+| --------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------- |
+| [`app-debug.apk`](Evidencias%20de%20funcionamiento/app-debug.apk)                                   | APK de la app para instalar en un dispositivo o emulador Android (`adb install -r "Evidencias de funcionamiento/app-debug.apk"`) |
+| [`Video de prueba tecnica.mp4`](Evidencias%20de%20funcionamiento/Video%20de%20prueba%20tecnica.mp4) | Video demostrativo del funcionamiento de la app y del feature flag que muestra u oculta el módulo de Categorías                  |
+
+## Índice
+
 | Tema                    | Dónde verlo                                                          |
 | ----------------------- | -------------------------------------------------------------------- |
 | Cómo correrla           | [Inicio rápido](#inicio-rápido)                                      |
 | Generar el APK          | [Generar el APK](#generar-el-apk)                                    |
 | Demo del feature flag   | [Firebase Remote Config](#firebase-remote-config-y-feature-flag)     |
 | Qué se hizo y cuándo    | [Descripción de los cambios](#descripción-de-los-cambios-realizados) |
-| Capturas y video        | [Evidencias](#evidencias)                                            |
 | Arquitectura en detalle | [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md)                         |
 
 ## Inicio rápido
@@ -54,7 +64,7 @@ APK resultante: `platforms/android/app/build/outputs/apk/debug/app-debug.apk`.
 
 ### Feature flag remoto
 
-El flag `categories_enabled` de Firebase Remote Config muestra u oculta toda la función de categorías sin reinstalar la app. Ver [la sección dedicada](#firebase-remote-config-y-feature-flag).
+El feature flag está enfocado en **mostrar u ocultar el módulo de Categorías**: el flag `categories_enabled` de Firebase Remote Config lo activa o desactiva por completo, sin reinstalar ni recargar la app. Ver [la sección dedicada](#firebase-remote-config-y-feature-flag).
 
 ## Stack y versiones
 
@@ -135,6 +145,8 @@ Ionic CLI y Cordova son `devDependencies` locales: **no hace falta instalarlos g
 
 ## Generar el APK
 
+> **¿Solo quieres probar la app?** El APK ya generado está en [`Evidencias de funcionamiento/app-debug.apk`](Evidencias%20de%20funcionamiento/app-debug.apk). Para generarlo tú mismo:
+
 ```bash
 npm run android:build
 ```
@@ -178,7 +190,12 @@ Detalle del mecanismo: [docs/ARCHITECTURE.md → Live reload en Android](docs/AR
 
 ### Qué controla
 
-El flag booleano **`categories_enabled`** (valor local por defecto: `true`). Cuando está en `false`:
+El feature flag está enfocado en **mostrar u ocultar el módulo de Categorías**. Es el flag booleano **`categories_enabled`** (valor local por defecto: `true`):
+
+- **`true`**: el módulo de Categorías está disponible (pestaña, gestión de categorías, asignación y filtro).
+- **`false`**: el módulo de Categorías se oculta por completo y la app funciona como una lista de tareas simple.
+
+Cuando está en `false`:
 
 - desaparece la pestaña "Categorías" y la ruta redirige a tareas;
 - la lista de tareas oculta los chips de filtro, el campo de categoría del formulario y la etiqueta en las tarjetas.
@@ -265,22 +282,6 @@ Historial real del repositorio, en orden cronológico:
 | Firebase Remote Config | `8ce02f6`            | Integración de Remote Config y feature flag `categories_enabled` que controla toda la función de categorías                                      |
 
 Ver el historial completo con `git log --oneline`.
-
-## Evidencias
-
-Pendiente de completar. Las imágenes y el video se guardan en `docs/evidence/`.
-
-<!-- Reemplazar cada ítem por la imagen: ![descripción](docs/evidence/archivo.png) -->
-
-- [ ] Lista de tareas (con tarjeta de progreso)
-- [ ] Pantalla de categorías
-- [ ] Formulario de tarea con categoría asignada
-- [ ] Filtro por categoría
-- [ ] Flag apagado (`categories_enabled = false`): sin pestaña ni chips
-- [ ] Flag encendido (`categories_enabled = true`)
-- [ ] App corriendo en dispositivo o emulador Android
-- [ ] Video de demo: <!-- pegar enlace aquí -->
-- [ ] APK entregado: <!-- ruta o enlace de descarga -->
 
 ## Decisiones y trade-offs
 
