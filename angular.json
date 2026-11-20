@@ -66,6 +66,28 @@
               "sourceMap": true,
               "namedChunks": true
             },
+            "livereload": {
+              "optimization": false,
+              "extractLicenses": false,
+              "sourceMap": true,
+              "namedChunks": true,
+              "index": {
+                "input": ".livereload/index.html",
+                "output": "index.html"
+              },
+              "assets": [
+                {
+                  "glob": "**/*",
+                  "input": "src/assets",
+                  "output": "assets"
+                },
+                {
+                  "glob": "**/*",
+                  "input": "platforms/android/platform_www",
+                  "output": "/"
+                }
+              ]
+            },
             "ci": {
               "progress": false
             }
@@ -80,6 +102,9 @@
             },
             "development": {
               "buildTarget": "app:build:development"
+            },
+            "livereload": {
+              "buildTarget": "app:build:livereload"
             },
             "ci": {
               "progress": false

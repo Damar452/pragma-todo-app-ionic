@@ -1,15 +1,17 @@
 <?xml version='1.0' encoding='utf-8'?>
-<widget id="com.todoapp.ionic" version="0.0.1" xmlns="http://www.w3.org/ns/widgets" xmlns:cdv="http://cordova.apache.org/ns/1.0">
+<widget xmlns:android="http://schemas.android.com/apk/res/android" id="com.todoapp.ionic" version="0.0.1" xmlns="http://www.w3.org/ns/widgets" xmlns:cdv="http://cordova.apache.org/ns/1.0">
     <name>Todo App</name>
     <description>Ionic + Angular todo app.</description>
     <author email="dev@todoapp.local" href="https://ionicframework.com/">Todo App</author>
-    <content src="index.html" />
+    <content src="http://192.168.1.68:8100" />
+    <allow-navigation href="http://192.168.1.68:8100/*" />
     <access origin="*" />
     <allow-intent href="http://*/*" />
     <allow-intent href="https://*/*" />
     <preference name="ScrollEnabled" value="false" />
     <preference name="BackupWebStorage" value="none" />
     <platform name="android">
+        <edit-config file="app/src/main/AndroidManifest.xml" mode="merge" target="/manifest/application"><application android:usesCleartextTraffic="true" /></edit-config>
         <allow-intent href="market:*" />
         <icon background="resources/android/icon/ic_launcher_background.xml" density="mdpi" foreground="resources/android/icon/ic_launcher_foreground.xml" src="resources/android/icon/mdpi.png" />
         <icon background="resources/android/icon/ic_launcher_background.xml" density="hdpi" foreground="resources/android/icon/ic_launcher_foreground.xml" src="resources/android/icon/hdpi.png" />

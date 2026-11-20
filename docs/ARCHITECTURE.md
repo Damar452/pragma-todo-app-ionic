@@ -143,3 +143,32 @@ app initializer that preloads the default language, so the first render never sh
 
 To add a language (e.g. `en`): create `src/assets/i18n/en.json` with the same keys, add `'en'` to
 `AVAILABLE_LANGS` in `provide-i18n.ts` and register its Angular locale data. No component changes.
+
+## Development workflow
+
+### Live reload on Android
+
+```
+npm run android:build                      # once: creates platforms/android/platform_www (cordova.js + plugins)
+npm run android:live                       # first booted device/emulator
+npm run android:live -- --emulator         # or --device, or --target <id>
+npm run android:live -- --host 192.168.1.20   # override the host (or env LIVERELOAD_HOST)
+```
+
+`ionic cordova run android -l` does not work here: it injects cordova.js with Webpack transforms,
+which the esbuild `@angular/build:application` builder rejects. `scripts/android-livereload.mjs`
+replaces it:
+
+1. Generates `.livereload/index.html` (`src/index.html` + `<script src="cordova.js">`) and serves it with
+   `ng serve --configuration livereload` on `0.0.0.0:8100`. That configuration also serves
+   `platforms/android/platform_www`, so cordova.js and the SQLite plugin load from the dev server.
+2. Temporarily patches `config.xml` (backup in `config.xml.livereload.bak`): `<content>` points to
+   `http://<LAN IP>:8100`, plus `allow-navigation` and cleartext HTTP (Android 9+ blocks it).
+3. Runs `cordova run android` to install a debug APK that loads the dev server.
+4. On Ctrl+C it stops `ng serve`, restores `config.xml`, runs `cordova prepare android` and strips the
+   cleartext flag from the manifest. The installed app keeps pointing to the dev server until you run
+   `npm run android:run` again. A stale backup (crash) is restored on the next start.
+
+Notes: the phone must be on the same Wi-Fi as the computer (the LAN IP also works for the emulator);
+macOS may ask to allow incoming connections for Node the first time. Virtual interfaces (VPN `utun*`,
+Docker, ...) are skipped when picking the IP. Edits to `src/` reload the WebView automatically.

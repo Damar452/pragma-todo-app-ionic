@@ -21,6 +21,7 @@
     "cordova": "cordova",
     "android:build": "ionic cordova build android",
     "android:run": "ionic cordova run android",
+    "android:live": "node scripts/android-livereload.mjs",
     "android:emulate": "ionic cordova emulate android",
     "assets:icons": "node scripts/generate-icons.mjs"
   },
