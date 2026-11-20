@@ -20,6 +20,7 @@ import { SectionHeaderComponent } from '@shared/ui/molecules/section-header/sect
 export class TaskListComponent {
   readonly tasks = input.required<readonly Task[]>();
   readonly categories = input.required<readonly Category[]>();
+  readonly showCategory = input(true);
 
   readonly toggleComplete = output<Task>();
   readonly edit = output<Task>();

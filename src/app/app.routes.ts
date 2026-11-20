@@ -1,5 +1,8 @@
 import type { Routes } from '@angular/router';
 
+import { featureFlagGuard } from '@core/feature-flags/feature-flag.guard';
+import { FeatureFlag } from '@core/feature-flags/feature-flags.enums';
+
 export const routes: Routes = [
   {
     path: '',
@@ -11,8 +14,8 @@ export const routes: Routes = [
         loadChildren: () => import('@features/tasks/tasks.routes').then((m) => m.TASKS_ROUTES),
       },
       {
-        // Will be gated by the `categories_enabled` feature flag (canMatch guard).
         path: 'categories',
+        canMatch: [featureFlagGuard(FeatureFlag.CategoriesEnabled)],
         loadChildren: () =>
           import('@features/categories/categories.routes').then((m) => m.CATEGORIES_ROUTES),
       },

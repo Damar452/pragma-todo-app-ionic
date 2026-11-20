@@ -44,4 +44,25 @@ describe('TaskFormComponent', () => {
     // Assert
     expect(emitted).toEqual([{ title: 'Buy milk', categoryId: 'c1' }]);
   });
+
+  it('hides the category select but keeps the task category when saving', () => {
+    // Arrange
+    const { fixture, form, emitted } = setup();
+    fixture.componentRef.setInput('showCategory', false);
+    fixture.componentRef.setInput('task', {
+      id: 't1',
+      title: 'Buy milk',
+      completed: false,
+      categoryId: 'c1',
+      createdAt: 1,
+    });
+    fixture.detectChanges();
+
+    // Act
+    form.dispatchEvent(new Event('submit'));
+
+    // Assert
+    expect(fixture.nativeElement.querySelector('ion-select')).toBeNull();
+    expect(emitted).toEqual([{ title: 'Buy milk', categoryId: 'c1' }]);
+  });
 });

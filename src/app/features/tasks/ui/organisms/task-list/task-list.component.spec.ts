@@ -52,4 +52,18 @@ describe('TaskListComponent', () => {
     // Assert
     expect(requested).toEqual([TASKS[0]]);
   });
+
+  it('hides the category tags when showCategory is off', () => {
+    // Arrange
+    const fixture = TestBed.createComponent(TaskListComponent);
+    fixture.componentRef.setInput('tasks', TASKS);
+    fixture.componentRef.setInput('categories', [{ id: 'c1', name: 'Work', color: '#4F46E5' }]);
+    fixture.componentRef.setInput('showCategory', false);
+
+    // Act
+    fixture.detectChanges();
+
+    // Assert
+    expect(fixture.nativeElement.textContent).not.toContain('Work');
+  });
 });

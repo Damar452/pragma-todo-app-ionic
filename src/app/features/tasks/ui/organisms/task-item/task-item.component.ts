@@ -51,6 +51,8 @@ import { ColorTagComponent } from '@shared/ui/molecules/color-tag/color-tag.comp
 export class TaskItemComponent {
   readonly task = input.required<Task>();
   readonly category = input<Category | null>(null);
+  /** Hides the category tag (feature switched off) without touching the task's data. */
+  readonly showCategory = input(true);
 
   protected readonly tone = computed(() =>
     this.task().completed ? StatusPillTone.Success : StatusPillTone.Primary,

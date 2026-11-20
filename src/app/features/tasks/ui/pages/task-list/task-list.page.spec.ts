@@ -4,6 +4,11 @@ import { By } from '@angular/platform-browser';
 import { TaskListPage } from './task-list.page';
 
 import { provideFakeDate } from '@core/date/testing/fake-date.service';
+import { FeatureFlag } from '@core/feature-flags/feature-flags.enums';
+import {
+  FakeFeatureFlags,
+  provideFakeFeatureFlags,
+} from '@core/feature-flags/testing/fake-feature-flags';
 import { ItemAction } from '@core/feedback/feedback.enums';
 import {
   FakeFeedbackService,
@@ -31,6 +36,7 @@ async function setup(tasks = [aTask({ id: 'a', title: 'Buy milk' })]) {
       { provide: CategoryTaskCleanup, useExisting: TasksStore },
       provideFakeFeedback(),
       ...provideFakeDate(),
+      ...provideFakeFeatureFlags(),
     ],
   });
   const tasksStore = TestBed.inject(TasksStore);
@@ -50,6 +56,7 @@ async function setup(tasks = [aTask({ id: 'a', title: 'Buy milk' })]) {
     categoriesStore,
     taskRepository,
     feedback: TestBed.inject(FakeFeedbackService),
+    flags: TestBed.inject(FakeFeatureFlags),
   };
 }
 
@@ -174,6 +181,59 @@ describe('TaskListPage', () => {
 
     // Assert
     expect(list.tasks()).toHaveLength(2);
+  });
+});
+
+describe('TaskListPage with categories switched off', () => {
+  const TASKS = [
+    aTask({ id: 'a', title: 'Work item', categoryId: 'c1' }),
+    aTask({ id: 'b', title: 'Loose item', categoryId: null }),
+  ];
+
+  it('hides the category filter chips and the category tags', async () => {
+    // Arrange
+    const { fixture, flags } = await setup(TASKS);
+    expect(fixture.nativeElement.querySelector('app-category-filter')).not.toBeNull();
+    expect(fixture.nativeElement.textContent).toContain('Home');
+
+    // Act
+    flags.set(FeatureFlag.CategoriesEnabled, false);
+    fixture.detectChanges();
+
+    // Assert
+    expect(fixture.nativeElement.querySelector('app-category-filter')).toBeNull();
+    expect(fixture.nativeElement.querySelector('app-color-tag')).toBeNull();
+  });
+
+  it('ignores a selected category filter and shows every task', async () => {
+    // Arrange
+    const { fixture, page, list, flags } = await setup(TASKS);
+    page['filter'].set({ kind: TaskFilterKind.Category, categoryId: 'c1' });
+    fixture.detectChanges();
+    expect(list.tasks()).toHaveLength(1);
+
+    // Act
+    flags.set(FeatureFlag.CategoriesEnabled, false);
+    fixture.detectChanges();
+
+    // Assert
+    expect(list.tasks()).toHaveLength(2);
+  });
+
+  it('restores the filter and the tags when the flag comes back', async () => {
+    // Arrange
+    const { fixture, page, list, flags } = await setup(TASKS);
+    page['filter'].set({ kind: TaskFilterKind.Category, categoryId: 'c1' });
+    flags.set(FeatureFlag.CategoriesEnabled, false);
+    fixture.detectChanges();
+
+    // Act
+    flags.set(FeatureFlag.CategoriesEnabled, true);
+    fixture.detectChanges();
+
+    // Assert
+    expect(list.tasks()).toHaveLength(1);
+    expect(fixture.nativeElement.querySelector('app-color-tag')).not.toBeNull();
   });
 });
 

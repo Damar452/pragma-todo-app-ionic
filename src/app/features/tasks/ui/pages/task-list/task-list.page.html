@@ -13,6 +13,7 @@
   <app-task-list
     [tasks]="visibleTasks()"
     [categories]="categories()"
+    [showCategory]="categoriesEnabled()"
     (toggleComplete)="onToggle($event)"
     (edit)="openEdit($event)"
     (remove)="onRemove($event)"

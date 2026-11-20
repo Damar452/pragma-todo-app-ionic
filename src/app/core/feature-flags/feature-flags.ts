@@ -1,10 +1,16 @@
+import { FeatureFlag } from './feature-flags.enums';
+
 /**
- * Every feature flag the app knows about, with its local default.
+ * Local default of every feature flag.
  * Defaults apply until Remote Config responds, and whenever it can't (offline).
  */
 export const FEATURE_FLAG_DEFAULTS = {
-  /** Category management: CRUD screen, category on tasks, filter by category. */
-  categories_enabled: true,
-} as const satisfies Record<string, boolean>;
+  [FeatureFlag.CategoriesEnabled]: true,
+} as const satisfies Record<FeatureFlag, boolean>;
 
-export type FeatureFlagKey = keyof typeof FEATURE_FLAG_DEFAULTS;
+export type FeatureFlagKey = FeatureFlag;
+
+/** Current value of every flag. */
+export type FeatureFlagValues = Record<FeatureFlagKey, boolean>;
+
+export const FEATURE_FLAG_KEYS = Object.keys(FEATURE_FLAG_DEFAULTS) as FeatureFlagKey[];

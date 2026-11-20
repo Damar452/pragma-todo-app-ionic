@@ -14,9 +14,11 @@ import { routes } from './app.routes';
 import { provideCategoryTaskCleanup } from './provide-category-task-cleanup';
 
 import { provideDate } from '@core/date/provide-date';
+import { provideFeatureFlags } from '@core/feature-flags/provide-feature-flags';
 import { provideFeedback } from '@core/feedback/provide-feedback';
 import { provideI18n } from '@core/i18n/provide-i18n';
 import { provideStorage } from '@core/storage/provide-storage';
+import { environment } from '@env/environment';
 import { provideCategoriesData } from '@features/categories/data/provide-categories-data';
 import { provideCategoriesState } from '@features/categories/state/provide-categories-state';
 import { provideTasksData } from '@features/tasks/data/provide-tasks-data';
@@ -37,6 +39,7 @@ export const appConfig: ApplicationConfig = {
     provideTasksState(),
     provideCategoriesState(),
     provideCategoryTaskCleanup(),
+    provideFeatureFlags(environment),
     provideAppInitializer(initializeAppData),
   ],
 };

@@ -20,7 +20,7 @@
       (ionChange)="onToggle()"
     />
     <div class="info">
-      @if (category(); as category) {
+      @if (showCategory() && category(); as category) {
         <app-color-tag [color]="category.color" [label]="category.name" />
       }
       <h3 class="title" [class.title--done]="task().completed">{{ task().title }}</h3>

@@ -12,7 +12,8 @@ import {
 } from './task-list.page.constants';
 
 import { DateService } from '@core/date/date.service';
-import { FEATURE_FLAG_DEFAULTS } from '@core/feature-flags/feature-flags';
+import { FeatureFlagPort } from '@core/feature-flags/feature-flag.port';
+import { FeatureFlag } from '@core/feature-flags/feature-flags.enums';
 import { ItemAction } from '@core/feedback/feedback.enums';
 import { FeedbackService } from '@core/feedback/feedback.service';
 import { CategoriesStore } from '@features/categories/state/categories.store';
@@ -58,8 +59,9 @@ export class TaskListPage {
   protected readonly tasks = this.tasksStore.tasks;
   protected readonly categories = this.categoriesStore.categories;
 
-  /** Will be wired to the `categories_enabled` feature flag. */
-  protected readonly categoriesEnabled = signal(FEATURE_FLAG_DEFAULTS.categories_enabled);
+  protected readonly categoriesEnabled = inject(FeatureFlagPort).isEnabled(
+    FeatureFlag.CategoriesEnabled,
+  );
 
   /** Subtitle under the page title in the app locale, e.g. "Viernes, 20 de noviembre". */
   protected readonly todayLabel = this.dateService.formatLongDate(this.dateService.today());
@@ -73,12 +75,17 @@ export class TaskListPage {
 
   protected readonly completedCount = computed(() => countCompletedTasks(this.tasks()));
 
-  /** The selected filter, or "all" when its category was deleted meanwhile. */
+  /**
+   * The selected filter, or "all" when its category was deleted meanwhile or categories are switched off
+   * (the stored filter is kept, so it applies again if the flag comes back).
+   */
   protected readonly activeFilter = computed(() =>
-    resolveTaskFilter(
-      this.filter(),
-      this.categories().map((category) => category.id),
-    ),
+    this.categoriesEnabled()
+      ? resolveTaskFilter(
+          this.filter(),
+          this.categories().map((category) => category.id),
+        )
+      : INITIAL_TASK_FILTER,
   );
 
   protected readonly visibleTasks = computed(() => filterTasks(this.tasks(), this.activeFilter()));

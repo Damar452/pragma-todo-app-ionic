@@ -39,6 +39,7 @@
     "@ionic/storage-angular": "^4.0.0",
     "@jsverse/transloco": "^8.4.0",
     "@jsverse/transloco-messageformat": "^8.4.0",
+    "firebase": "^13.4.0",
     "ionicons": "^8.1.0",
     "localforage-cordovasqlitedriver": "^1.8.0",
     "rxjs": "~7.8.0",

@@ -85,6 +85,7 @@ TypeScript path aliases (`paths` in `tsconfig.json`) replace every parent-relati
 | `@layout/*`   | `src/app/layout/*`   |
 | `@testing/*`  | `src/testing/*`      |
 | `@assets/*`   | `src/assets/*`       |
+| `@env/*`      | `src/environments/*` |
 
 `../` imports are forbidden (`no-restricted-imports` fails the lint). Only
 same-folder imports (`./x`) stay relative: they are the file's immediate neighbours.
@@ -153,6 +154,38 @@ Consumers inject the contract; implementations are bound in `provide*()` functio
 
 Remaining `providedIn: 'root'`: `ID_GENERATOR` (a default-valued token) and `TranslocoHttpLoader`
 (third-party loader class, no contract needed).
+
+## Feature flags
+
+Flags come from **Firebase Remote Config** through the **Firebase JS (web) SDK**, modular imports only
+(`firebase/app`, `firebase/remote-config`). The app runs in Cordova's WebView (origin `https://localhost`), so the
+web SDK works as is. `cordova-plugin-firebasex` was rejected: it adds a native dependency, a
+`google-services.json` and Gradle changes (and touches `config.xml`/platform files) for a boolean flag.
+
+- **Layers.** `FeatureFlagPort` (contract; `isEnabled(key)` returns a signal) <- `FirebaseFeatureFlagAdapter`
+  (signals, never throws) <- `RemoteConfigClient` (thin abstract seam) <- `FirebaseRemoteConfigClient` (the only file
+  that touches the SDK; initializes the Firebase app lazily, once). Specs use `FakeRemoteConfigClient` for the adapter
+  and `provideFakeFeatureFlags(overrides?)` everywhere else (registered globally in `src/test-setup.ts`).
+- **Keys and defaults.** `FeatureFlag` (`feature-flags.enums.ts`) names the flags; `FEATURE_FLAG_DEFAULTS`
+  holds the local default of each. Signals start at the defaults and only change after a successful fetch, so offline
+  or SDK-unsupported runs behave as "defaults" (or the values cached by the SDK in IndexedDB).
+- **Wiring.** `provideFeatureFlags(environment)` in `app.config.ts` binds the port/client and registers
+  `initializeFeatureFlags`, which races `init()` against `initTimeoutMs` (2 s): the first render never waits longer, and the
+  signals update when the fetch finishes. It also refreshes on Ionic `Platform.resume`. The config
+  (`firebase` + `remoteConfig`) lives in `src/environments/` (`@env/*`); the web config values are public identifiers.
+- **Realtime.** The adapter subscribes with `onConfigUpdate`; each push calls `activate()` and syncs the signals,
+  so a flag flipped in the console reaches an open app without a restart. Resume refresh is the fallback when the
+  stream is not connected.
+- **Fetch interval tradeoff.** `minimumFetchIntervalMillis`: dev `0`; prod `60_000` so a demo reflects changes
+  quickly. The SDK default is 12 h; fetching more often than a few times per hour gets throttled by the backend
+  (the SDK then serves cached values), so raise it for a real release.
+- **Gating `categories_enabled`.** Route `canMatch: [featureFlagGuard(...)]` (redirects to `/tasks`); the tabs
+  layout hides the tab and leaves `/categories` if the flag turns off; the task list hides the filter chips (the
+  filter falls back to "all"), the category field in the form and the tag on cards. Data is never touched:
+  turning the flag back on restores everything.
+- **Flip it for the demo.** Firebase console > Remote Config > `categories_enabled` > set `false` > Publish
+  changes. Open apps update within seconds (realtime); otherwise on the next resume/start after the fetch interval.
+  If the API key is restricted by HTTP referrer, allow `https://localhost/*`.
 
 ## Visual language
 
