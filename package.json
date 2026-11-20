@@ -21,7 +21,8 @@
     "cordova": "cordova",
     "android:build": "ionic cordova build android",
     "android:run": "ionic cordova run android",
-    "android:emulate": "ionic cordova emulate android"
+    "android:emulate": "ionic cordova emulate android",
+    "assets:icons": "node scripts/generate-icons.mjs"
   },
   "private": true,
   "dependencies": {
@@ -55,6 +56,7 @@
     "eslint": "^10.10.0",
     "jsdom": "^31.0.0",
     "prettier": "^3.9.10",
+    "sharp": "^0.35.5",
     "typescript": "~6.0.0",
     "typescript-eslint": "^8.61.0",
     "vitest": "^5.1.0"

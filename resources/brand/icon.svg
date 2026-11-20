@@ -1,0 +1,28 @@
+<!--
+  Brand master icon (source of truth for raster assets).
+  Rendered by scripts/generate-icons.mjs into legacy Android launcher PNGs
+  and the web favicon. The clipboard paths are shared with the Android vector
+  drawables (splash + adaptive icon foreground) using a 288-unit grid.
+-->
+<svg xmlns="http://www.w3.org/2000/svg" width="1024" height="1024" viewBox="0 0 1024 1024">
+  <rect width="1024" height="1024" rx="224" fill="#4F46E5" />
+  <g transform="translate(-121.6 -112.8) scale(4.4)">
+    <!-- Clipboard card + clip -->
+    <path fill="#FFFFFF" d="M106,88 H182 A14,14 0 0 1 196,102 V192 A14,14 0 0 1 182,206 H106 A14,14 0 0 1 92,192 V102 A14,14 0 0 1 106,88 Z" />
+    <path fill="#A5B4FC" d="M130,78 H158 A6,6 0 0 1 164,84 V94 A6,6 0 0 1 158,100 H130 A6,6 0 0 1 124,94 V84 A6,6 0 0 1 130,78 Z" />
+
+    <!-- Row 1: done -->
+    <path fill="#4F46E5" d="M112,111 H122 A4,4 0 0 1 126,115 V125 A4,4 0 0 1 122,129 H112 A4,4 0 0 1 108,125 V115 A4,4 0 0 1 112,111 Z" />
+    <path fill="none" stroke="#FFFFFF" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" d="M112,120 L116,124 L122,116" />
+    <path fill="#C7D2FE" d="M140,116 H176 A4,4 0 0 1 176,124 H140 A4,4 0 0 1 140,116 Z" />
+
+    <!-- Row 2: done -->
+    <path fill="#4F46E5" d="M112,141 H122 A4,4 0 0 1 126,145 V155 A4,4 0 0 1 122,159 H112 A4,4 0 0 1 108,155 V145 A4,4 0 0 1 112,141 Z" />
+    <path fill="none" stroke="#FFFFFF" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" d="M112,150 L116,154 L122,146" />
+    <path fill="#C7D2FE" d="M140,146 H170 A4,4 0 0 1 170,154 H140 A4,4 0 0 1 140,146 Z" />
+
+    <!-- Row 3: pending -->
+    <path fill="none" stroke="#4F46E5" stroke-width="2.5" d="M112,171 H122 A4,4 0 0 1 126,175 V185 A4,4 0 0 1 122,189 H112 A4,4 0 0 1 108,185 V175 A4,4 0 0 1 112,171 Z" />
+    <path fill="#818CF8" d="M140,176 H166 A4,4 0 0 1 166,184 H140 A4,4 0 0 1 140,176 Z" />
+  </g>
+</svg>

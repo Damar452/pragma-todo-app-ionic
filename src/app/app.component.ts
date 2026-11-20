@@ -1,5 +1,7 @@
-import { Component } from '@angular/core';
-import { IonApp, IonRouterOutlet } from '@ionic/angular';
+import { Component, inject } from '@angular/core';
+import { IonApp, IonRouterOutlet, Platform } from '@ionic/angular';
+
+import { hideSplashScreen } from './core/platform/splash-screen';
 
 @Component({
   selector: 'app-root',
@@ -7,5 +9,9 @@ import { IonApp, IonRouterOutlet } from '@ionic/angular';
   imports: [IonApp, IonRouterOutlet],
 })
 export class AppComponent {
-  constructor() {}
+  private readonly platform = inject(Platform);
+
+  constructor() {
+    void this.platform.ready().then(hideSplashScreen);
+  }
 }

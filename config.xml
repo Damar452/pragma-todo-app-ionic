@@ -11,6 +11,14 @@
     <preference name="BackupWebStorage" value="none" />
     <platform name="android">
         <allow-intent href="market:*" />
+        <icon background="resources/android/icon/ic_launcher_background.xml" density="mdpi" foreground="resources/android/icon/ic_launcher_foreground.xml" src="resources/android/icon/mdpi.png" />
+        <icon background="resources/android/icon/ic_launcher_background.xml" density="hdpi" foreground="resources/android/icon/ic_launcher_foreground.xml" src="resources/android/icon/hdpi.png" />
+        <icon background="resources/android/icon/ic_launcher_background.xml" density="xhdpi" foreground="resources/android/icon/ic_launcher_foreground.xml" src="resources/android/icon/xhdpi.png" />
+        <icon background="resources/android/icon/ic_launcher_background.xml" density="xxhdpi" foreground="resources/android/icon/ic_launcher_foreground.xml" src="resources/android/icon/xxhdpi.png" />
+        <icon background="resources/android/icon/ic_launcher_background.xml" density="xxxhdpi" foreground="resources/android/icon/ic_launcher_foreground.xml" src="resources/android/icon/xxxhdpi.png" />
+        <preference name="AndroidWindowSplashScreenAnimatedIcon" value="resources/android/splash/ic_splash.xml" />
+        <preference name="AndroidWindowSplashScreenBackground" value="#4F46E5" />
+        <preference name="AutoHideSplashScreen" value="false" />
     </platform>
     <platform name="ios">
         <allow-intent href="itms:*" />
