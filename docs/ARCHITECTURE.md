@@ -1,83 +1,83 @@
-# Architecture
+# Arquitectura
 
-The app is organized **by feature** (the folder tree says "tasks" and "categories", not
-"services" and "components"), with a light **hexagonal** split inside each feature and
-**Atomic Design** for the UI. The layer rules below are enforced by
-`eslint-plugin-boundaries` (see `eslint.config.js`), so a wrong import fails `npm run lint`.
+La app se organiza **por funcionalidad** (el árbol de carpetas dice "tasks" y "categories", no "services" y "components"), con una separación **hexagonal liviana** dentro de cada feature y **Atomic Design** para la UI. Las reglas de capas de este documento las hace cumplir `eslint-plugin-boundaries` (ver `eslint.config.js`): un import incorrecto hace fallar `npm run lint`.
 
-## Folder layout
+## Contenido
+
+- [Estructura de carpetas](#estructura-de-carpetas)
+- [Reglas de capas](#reglas-de-capas)
+- [Convenciones de código](#convenciones-de-código)
+- [Path aliases](#path-aliases)
+- [Datos y estado](#datos-y-estado)
+- [Contratos e inversión de dependencias](#contratos-e-inversión-de-dependencias)
+- [Feature flags](#feature-flags)
+- [Lenguaje visual](#lenguaje-visual)
+- [Internacionalización](#internacionalización)
+- [Flujo de desarrollo: live reload en Android](#flujo-de-desarrollo-live-reload-en-android)
+
+## Estructura de carpetas
 
 ```
 src/app/
-├── core/                      App-wide singletons and ports/adapters (storage, feedback, runtime, feature flags, platform)
-├── layout/                    App shell (tabs layout) around the routed features
+├── core/                      Singletons y puertos/adaptadores de la app (storage, feedback, runtime, feature flags, plataforma)
+├── layout/                    Shell de la app (layout con tabs) alrededor de las features enrutadas
 ├── shared/
 │   ├── ui/
-│   │   ├── atoms/             Smallest domain-agnostic UI pieces (color-dot, progress-ring, icon-badge, status-pill)
-│   │   ├── molecules/         Compositions of atoms (chip-selector, progress-summary, section-header, empty-state)
-│   │   └── templates/         Page layouts with content projection
-│   └── utils/<topic>/         Global helper functions, one per file (number/clamp.ts, date/format-long-date.ts, ...)
+│   │   ├── atoms/             Piezas de UI mínimas, sin dominio (color-dot, progress-ring, icon-badge, status-pill)
+│   │   ├── molecules/         Composiciones de atoms (chip-selector, progress-summary, section-header, empty-state)
+│   │   └── templates/         Layouts de página con proyección de contenido
+│   └── utils/<tema>/          Funciones auxiliares globales, una por archivo (number/clamp.ts, date/format-long-date.ts, ...)
 └── features/
     └── <feature>/
-        ├── domain/            Models and pure business rules. No Angular.
-        ├── data/              Repositories: persistence behind an abstract contract
-        ├── state/             Signal-based stores
+        ├── domain/            Modelos y reglas de negocio puras. Sin Angular.
+        ├── data/              Repositorios: persistencia detrás de un contrato abstracto
+        ├── state/             Stores basados en signals
         ├── ui/
-        │   ├── organisms/     Domain-aware presentational components
-        │   └── pages/         Routed containers: the only UI that injects state
+        │   ├── organisms/     Componentes presentacionales con conocimiento del dominio
+        │   └── pages/         Contenedores enrutados: la única UI que inyecta estado
         └── <feature>.routes.ts
 ```
 
-Folders are created when the first file needs them; empty layers are not kept around.
+Las carpetas se crean cuando el primer archivo las necesita; no se mantienen capas vacías.
 
-## Layer rules
+## Reglas de capas
 
-| From        | May import                                                   |
-| ----------- | ------------------------------------------------------------ |
-| `core`      | core, shared/utils                                           |
-| `layout`    | core, atoms, molecules, templates, shared/utils              |
-| `atoms`     | atoms, shared/utils                                          |
-| `molecules` | atoms, molecules, shared/utils                               |
-| `templates` | atoms, molecules, templates, shared/utils                    |
-| `domain`    | its own feature's domain, shared/utils                       |
-| `data`      | its own feature's domain and data, core, shared/utils        |
-| `state`     | its own feature's domain, data and state, core, utils        |
-| `organisms` | any feature's domain, atoms, molecules, own organisms, utils |
-| `pages`     | everything above except other features' organisms            |
+| Desde       | Puede importar                                                              |
+| ----------- | --------------------------------------------------------------------------- |
+| `core`      | core, shared/utils                                                          |
+| `layout`    | core, atoms, molecules, templates, shared/utils                             |
+| `atoms`     | atoms, shared/utils                                                         |
+| `molecules` | atoms, molecules, shared/utils                                              |
+| `templates` | atoms, molecules, templates, shared/utils                                   |
+| `domain`    | el `domain` de su propia feature, shared/utils                              |
+| `data`      | `domain` y `data` de su propia feature, core, shared/utils                  |
+| `state`     | `domain`, `data` y `state` de su propia feature, core, shared/utils         |
+| `organisms` | `domain` (de cualquier feature), atoms, molecules, organisms propios, utils |
+| `pages`     | todo lo anterior, excepto los organisms de otras features                   |
 
-Key ideas behind them:
+Todo lo que no figura en la tabla es un error de lint.
 
-- **`shared` never imports `features`.** Shared UI is domain-agnostic and reusable.
-- **Ionic components are the atoms' building blocks.** We do not wrap `ion-button` in an
-  `app-button` that only forwards inputs.
-- **Container / presentational.** Pages inject stores; atoms through organisms only use
-  `input()` / `output()` with `OnPush`.
-- **Domain stays pure.** Business rules are plain functions, testable without TestBed.
+Ideas clave detrás de las reglas:
 
-## Code conventions
+- **`shared` nunca importa `features`.** La UI compartida no conoce el dominio y es reutilizable.
+- **Los componentes de Ionic son los bloques de los atoms.** No se envuelve `ion-button` en un `app-button` que solo reenvía inputs.
+- **Container / presentational.** Las pages inyectan stores; desde atoms hasta organisms solo usan `input()` / `output()` con `OnPush`.
+- **El dominio es puro.** Las reglas de negocio son funciones simples, testeables sin TestBed.
 
-1. **No magic strings or numbers in classes.** Components, pages, services and stores take them
-   from a `<name>.constants.ts` file in the owner's folder (`UPPER_SNAKE_CASE`, `as const` when useful).
-   Numeric/config template bindings (`[size]`, `[breakpoints]`) come from a component property
-   fed by those constants. Only Angular metadata, import paths, SCSS and markup-only template
-   attributes (`slot="start"`, `fill="clear"`) stay inline.
-2. **Enums, types, interfaces and classes never live in a component or page file.** Enum-like
-   values are an `as const` object plus a derived union type in `<name>.enums.ts`; interfaces and
-   types go in `<name>.models.ts` next to the owner. Domain models stay in `domain/`.
-3. **Transversal helpers are global functions**, one per file, in `shared/utils/<topic>/<fn-name>.ts`
-   with a spec each. Feature-specific pure logic (filtering tasks, counting stats) lives in that
-   feature's `domain/` as pure functions with specs; pages only call them inside `computed()`.
-4. **No `switch/case`.** Use lookup tables keyed by the enum values (`TaskFilterHandlers` +
-   `matchTaskFilter`), `Map`s or ordered rule arrays (`progress-summary.headline.ts`).
+## Convenciones de código
 
-File naming: `*.constants.ts`, `*.enums.ts`, `*.models.ts`, `shared/utils/<topic>/<fn>.ts`
-(plus `<fn>.spec.ts`).
+1. **Sin strings ni números mágicos en las clases.** Componentes, pages, services y stores los toman de un archivo `<nombre>.constants.ts` en la carpeta del dueño (`UPPER_SNAKE_CASE`, `as const` cuando aporte). Los bindings numéricos o de configuración del template (`[size]`, `[breakpoints]`) salen de una propiedad del componente alimentada por esas constantes. Solo quedan en línea los metadatos de Angular, las rutas de import, el SCSS y los atributos de markup puro (`slot="start"`, `fill="clear"`).
+2. **Enums, tipos, interfaces y clases nunca viven en un archivo de componente o page.** Los valores tipo enum son un objeto `as const` más un tipo unión derivado en `<nombre>.enums.ts`; las interfaces y tipos van en `<nombre>.models.ts` junto al dueño. Los modelos de dominio se quedan en `domain/`.
+3. **Los helpers transversales son funciones globales**, una por archivo, en `shared/utils/<tema>/<nombre-fn>.ts`, cada una con su spec. La lógica pura específica de una feature (filtrar tareas, contar estadísticas) vive en el `domain/` de esa feature como funciones puras con spec; las pages solo las llaman dentro de `computed()`.
+4. **Sin `switch/case`.** Se usan tablas de búsqueda indexadas por los valores del enum (`TaskFilterHandlers` + `matchTaskFilter`), `Map`s o arreglos ordenados de reglas (`progress-summary.headline.ts`).
+
+Nombres de archivo: `*.constants.ts`, `*.enums.ts`, `*.models.ts`, `shared/utils/<tema>/<fn>.ts` (más `<fn>.spec.ts`).
 
 ## Path aliases
 
-TypeScript path aliases (`paths` in `tsconfig.json`) replace every parent-relative import:
+Los alias de TypeScript (`paths` en `tsconfig.json`) reemplazan todos los imports relativos al padre:
 
-| Alias         | Points to            |
+| Alias         | Apunta a             |
 | ------------- | -------------------- |
 | `@core/*`     | `src/app/core/*`     |
 | `@shared/*`   | `src/app/shared/*`   |
@@ -87,164 +87,176 @@ TypeScript path aliases (`paths` in `tsconfig.json`) replace every parent-relati
 | `@assets/*`   | `src/assets/*`       |
 | `@env/*`      | `src/environments/*` |
 
-`../` imports are forbidden (`no-restricted-imports` fails the lint). Only
-same-folder imports (`./x`) stay relative: they are the file's immediate neighbours.
+Los imports `../` están prohibidos (`no-restricted-imports` hace fallar el lint). Solo los imports de la misma carpeta (`./x`) se mantienen relativos: son los vecinos inmediatos del archivo.
 
-## Data & state
+## Datos y estado
 
-- **Storage port and adapter.** Repositories depend on the abstract `KeyValueStorage`
-  (`core/storage`). `IonicStorageAdapter` implements it with `@ionic/storage-angular` (v4 is
-  NgModule-only, so `provideStorage()` uses `importProvidersFrom(IonicStorageModule.forRoot(...))`).
-  Driver order: `cordovaSQLiteDriver` (native SQLite through `cordova-sqlite-storage`, on device),
-  then IndexedDB, then localStorage (browser). The SQLite driver is registered with
-  `defineDriver()` before `create()`; both run once, lazily, behind a memoized promise on the
-  first read/write. Specs use `InMemoryKeyValueStorage` (`core/storage/testing/`).
-- **Keys.** `todo:tasks` and `todo:categories` (each holds the whole array, constants in the
-  feature's `data/`) and `todo:schemaVersion` (`core/storage/storage.constants.ts`). Repositories
-  parse defensively (`parseTasks` / `parseCategories`): unreadable data reads as `[]`, invalid
-  items are dropped.
-- **Schema version & migrations.** `runMigrations(storage, migrations)` (`core/storage`) reads the
-  stored version (missing = 0), applies every newer migration in order and saves the version
-  after each one. The app's history lives in `src/app/app.migrations.ts` (app root: it spans both
-  features' keys, which a feature's `data/` may not do). Current version: **2** (v2 gives legacy
-  tasks `categoryId: null` and initializes the categories key to `[]`). Never edit an old
-  migration; append a new one.
-- **Stores.** `TasksStore` / `CategoriesStore` are the single source of truth, with read-only
-  signals (`status`, sorted `tasks` / `categories`). Every mutation: pure domain function computes
-  the next list, the signal is updated (optimistic), the repository persists it, and on failure
-  the previous list is restored and the error rethrown (pages show an error toast).
-  `TasksStore.remove()` returns a `{ task, index }` snapshot for `restore()` (undo);
-  `CategoriesStore.remove()` also calls `CategoryTaskCleanup.unassignCategory()` (see below). Ids come from the
-  `ID_GENERATOR` token (`core/runtime`) and time from `DateService`, so specs are deterministic.
-- **App initializer.** `app.config.ts` is the composition root (providers moved out of `main.ts`).
-  `provideAppInitializer(initializeAppData)` runs migrations, then
-  `Promise.all([tasks.load(), categories.load()])`, before the first render; the native splash
-  (`AutoHideSplashScreen=false`) stays up meanwhile.
-- **Dates and time.** `DateService` (`core/date`) is the single entry point: `now()` (epoch ms),
-  `today()` and `formatLongDate(date)` (capitalized, in the app `LOCALE_ID`). It delegates to the pure
-  helpers in `shared/utils`. Stores and pages never call `Date.now()` / `new Date()` / `Intl` directly;
-  specs use `provideFakeDate(now?)` (`core/date/testing/`).
-- **Feedback.** `FeedbackService` (`core/feedback`, implemented by `IonicFeedbackService`) wraps Ionic toasts/alerts with Transloco keys:
-  `toast`, `toastError`, `toastWithUndo` (resolves `true` if "Deshacer" was tapped) and `confirm`.
+### Almacenamiento
 
-## Contracts & dependency inversion
+Los repositorios dependen del contrato abstracto `KeyValueStorage` (`core/storage`). `IonicStorageAdapter` lo implementa con `@ionic/storage-angular` (la v4 es solo NgModule, por eso `provideStorage()` usa `importProvidersFrom(IonicStorageModule.forRoot(...))`).
 
-Stores and services are **abstract classes** that double as the contract and the DI token.
-Consumers inject the contract; implementations are bound in `provide*()` functions.
+Orden de drivers:
 
-- **Naming.** The contract keeps the domain name (`TasksStore`, `CategoriesStore`,
-  `FeedbackService`, `DateService`) so consumers never change. The implementation says how it
-  works: `Signal*` (`SignalTasksStore`, `SignalCategoriesStore`), `Ionic*` (`IonicFeedbackService`),
-  `Intl*` (`IntlDateService`). Same idea as `TaskRepository` / `TaskLocalRepository`.
-- **Bindings** live in `provideTasksState()`, `provideCategoriesState()`, `provideFeedback()`,
-  `provideDate()` (plus the data and storage ones), all registered in `app.config.ts`.
-  Implementations are plain `@Injectable()` (no `providedIn: 'root'`): nothing resolves unless
-  it is bound. Stores use `useExisting` so one instance answers to both the contract and the
-  concrete class; services with no concrete-class consumers use `useClass`.
-- **Narrow cross-feature contracts (ISP).** The categories state needs one thing from tasks:
-  drop a deleted category. It declares `CategoryTaskCleanup` (`unassignCategory`) in its own
-  folder and `SignalCategoriesStore` injects that, so `categories/state` imports nothing from
-  the tasks feature. The app root wires it in `provideCategoryTaskCleanup()`, whose factory
-  return type is annotated `CategoryTaskCleanup`: if `TasksStore` drifts, the build fails there.
-- **Tests.** Store specs still use the real store with in-memory repositories
-  (`provideInMemoryTasks()` / `provideInMemoryCategories()` also bind the state contracts).
-  `FakeFeedbackService` and `FakeDateService` extend the contracts (`provideFakeFeedback()`,
-  `provideFakeDate()`); `FakeCategoryTaskCleanup` isolates the categories store spec. Page specs
-  that need the real wiring provide `{ provide: CategoryTaskCleanup, useExisting: TasksStore }`.
+1. `cordovaSQLiteDriver`: SQLite nativo mediante `cordova-sqlite-storage` (en el dispositivo).
+2. IndexedDB.
+3. localStorage (navegador).
 
-Remaining `providedIn: 'root'`: `ID_GENERATOR` (a default-valued token) and `TranslocoHttpLoader`
-(third-party loader class, no contract needed).
+El driver de SQLite se registra con `defineDriver()` antes de `create()`; ambos se ejecutan una sola vez, de forma diferida, detrás de una promesa memoizada en la primera lectura o escritura. Los specs usan `InMemoryKeyValueStorage` (`core/storage/testing/`).
+
+### Claves y migraciones
+
+| Clave                | Contenido                      | Definida en                         |
+| -------------------- | ------------------------------ | ----------------------------------- |
+| `todo:tasks`         | Arreglo completo de tareas     | `data/` de la feature (constantes)  |
+| `todo:categories`    | Arreglo completo de categorías | `data/` de la feature (constantes)  |
+| `todo:schemaVersion` | Versión del esquema almacenado | `core/storage/storage.constants.ts` |
+
+- Los repositorios parsean de forma defensiva (`parseTasks` / `parseCategories`): los datos ilegibles se leen como `[]` y los elementos inválidos se descartan.
+- `runMigrations(storage, migrations)` (`core/storage`) lee la versión guardada (si falta, 0), aplica en orden cada migración más nueva y guarda la versión después de cada una.
+- El historial vive en `src/app/app.migrations.ts` (raíz de la app, porque abarca las claves de ambas features y el `data/` de una feature no puede hacerlo). Versión actual: **2** (la v2 asigna `categoryId: null` a las tareas legadas e inicializa la clave de categorías en `[]`).
+- **Nunca se edita una migración antigua**: se agrega una nueva.
+
+### Stores
+
+`TasksStore` y `CategoriesStore` son la única fuente de verdad, con signals de solo lectura (`status`, `tasks` / `categories` ordenadas). Cada mutación sigue el mismo flujo:
+
+1. Una función pura del dominio calcula la lista siguiente.
+2. Se actualiza el signal (actualización optimista).
+3. El repositorio persiste la lista.
+4. Si falla, se restaura la lista anterior y se relanza el error (las pages muestran un toast de error).
+
+Detalles:
+
+- `TasksStore.remove()` devuelve un snapshot `{ task, index }` para `restore()` (deshacer).
+- `CategoriesStore.remove()` además llama a `CategoryTaskCleanup.unassignCategory()` (ver [contratos](#contratos-e-inversión-de-dependencias)).
+- Los ids vienen del token `ID_GENERATOR` (`core/runtime`) y el tiempo de `DateService`, así los specs son deterministas.
+
+### Inicialización de la app
+
+`app.config.ts` es la raíz de composición (los providers salieron de `main.ts`). `provideAppInitializer(initializeAppData)` ejecuta las migraciones y luego `Promise.all([tasks.load(), categories.load()])` antes del primer render. Mientras tanto, el splash nativo (`AutoHideSplashScreen=false`) permanece visible.
+
+### Fechas y tiempo
+
+`DateService` (`core/date`) es el único punto de entrada: `now()` (epoch en ms), `today()` y `formatLongDate(date)` (con la primera letra en mayúscula, según el `LOCALE_ID` de la app). Delega en los helpers puros de `shared/utils`. Stores y pages nunca llaman a `Date.now()`, `new Date()` ni `Intl` directamente; los specs usan `provideFakeDate(now?)` (`core/date/testing/`).
+
+### Feedback al usuario
+
+`FeedbackService` (`core/feedback`, implementado por `IonicFeedbackService`) envuelve los toasts y alerts de Ionic con claves de Transloco:
+
+| Método          | Uso                                                     |
+| --------------- | ------------------------------------------------------- |
+| `toast`         | Mensaje informativo                                     |
+| `toastError`    | Mensaje de error                                        |
+| `toastWithUndo` | Toast con acción "Deshacer"; resuelve `true` si se tocó |
+| `confirm`       | Diálogo de confirmación                                 |
+
+## Contratos e inversión de dependencias
+
+Stores y services son **clases abstractas** que hacen de contrato y de token de DI a la vez. Los consumidores inyectan el contrato; las implementaciones se enlazan en funciones `provide*()`.
+
+- **Nombres.** El contrato conserva el nombre de dominio (`TasksStore`, `CategoriesStore`, `FeedbackService`, `DateService`) para que los consumidores no cambien. La implementación dice cómo funciona: `Signal*` (`SignalTasksStore`, `SignalCategoriesStore`), `Ionic*` (`IonicFeedbackService`), `Intl*` (`IntlDateService`). Misma idea que `TaskRepository` / `TaskLocalRepository`.
+- **Enlaces (bindings).** Viven en `provideTasksState()`, `provideCategoriesState()`, `provideFeedback()`, `provideDate()` (más los de data y storage), todos registrados en `app.config.ts`. Las implementaciones son `@Injectable()` simples (sin `providedIn: 'root'`): nada se resuelve si no está enlazado. Los stores usan `useExisting` para que una sola instancia responda tanto al contrato como a la clase concreta; los services sin consumidores de la clase concreta usan `useClass`.
+- **Contratos estrechos entre features (ISP).** El estado de categorías necesita una sola cosa de tareas: desasignar una categoría eliminada. Declara `CategoryTaskCleanup` (`unassignCategory`) en su propia carpeta y `SignalCategoriesStore` inyecta ese contrato, de modo que `categories/state` no importa nada de la feature de tareas. La raíz de la app lo conecta en `provideCategoryTaskCleanup()`, cuya factory tiene el tipo de retorno anotado como `CategoryTaskCleanup`: si `TasksStore` se desvía del contrato, el build falla ahí.
+- **Tests.** Los specs de stores siguen usando el store real con repositorios en memoria (`provideInMemoryTasks()` / `provideInMemoryCategories()` también enlazan los contratos de estado). `FakeFeedbackService` y `FakeDateService` extienden los contratos (`provideFakeFeedback()`, `provideFakeDate()`); `FakeCategoryTaskCleanup` aísla el spec del store de categorías. Los specs de pages que necesitan el cableado real proveen `{ provide: CategoryTaskCleanup, useExisting: TasksStore }`.
+
+Siguen con `providedIn: 'root'` solo `ID_GENERATOR` (un token con valor por defecto) y `TranslocoHttpLoader` (clase de un tercero, sin necesidad de contrato).
 
 ## Feature flags
 
-Flags come from **Firebase Remote Config** through the **Firebase JS (web) SDK**, modular imports only
-(`firebase/app`, `firebase/remote-config`). The app runs in Cordova's WebView (origin `https://localhost`), so the
-web SDK works as is. `cordova-plugin-firebasex` was rejected: it adds a native dependency, a
-`google-services.json` and Gradle changes (and touches `config.xml`/platform files) for a boolean flag.
+Los flags provienen de **Firebase Remote Config** a través del **SDK web de Firebase** (JS), solo con imports modulares (`firebase/app`, `firebase/remote-config`). La app corre en el WebView de Cordova (origen `https://localhost`), por lo que el SDK web funciona tal cual.
 
-- **Layers.** `FeatureFlagPort` (contract; `isEnabled(key)` returns a signal) <- `FirebaseFeatureFlagAdapter`
-  (signals, never throws) <- `RemoteConfigClient` (thin abstract seam) <- `FirebaseRemoteConfigClient` (the only file
-  that touches the SDK; initializes the Firebase app lazily, once). Specs use `FakeRemoteConfigClient` for the adapter
-  and `provideFakeFeatureFlags(overrides?)` everywhere else (registered globally in `src/test-setup.ts`).
-- **Keys and defaults.** `FeatureFlag` (`feature-flags.enums.ts`) names the flags; `FEATURE_FLAG_DEFAULTS`
-  holds the local default of each. Signals start at the defaults and only change after a successful fetch, so offline
-  or SDK-unsupported runs behave as "defaults" (or the values cached by the SDK in IndexedDB).
-- **Wiring.** `provideFeatureFlags(environment)` in `app.config.ts` binds the port/client and registers
-  `initializeFeatureFlags`, which races `init()` against `initTimeoutMs` (2 s): the first render never waits longer, and the
-  signals update when the fetch finishes. It also refreshes on Ionic `Platform.resume`. The config
-  (`firebase` + `remoteConfig`) lives in `src/environments/` (`@env/*`); the web config values are public identifiers.
-- **Realtime.** The adapter subscribes with `onConfigUpdate`; each push calls `activate()` and syncs the signals,
-  so a flag flipped in the console reaches an open app without a restart. Resume refresh is the fallback when the
-  stream is not connected.
-- **Fetch interval tradeoff.** `minimumFetchIntervalMillis`: dev `0`; prod `60_000` so a demo reflects changes
-  quickly. The SDK default is 12 h; fetching more often than a few times per hour gets throttled by the backend
-  (the SDK then serves cached values), so raise it for a real release.
-- **Gating `categories_enabled`.** Route `canMatch: [featureFlagGuard(...)]` (redirects to `/tasks`); the tabs
-  layout hides the tab and leaves `/categories` if the flag turns off; the task list hides the filter chips (the
-  filter falls back to "all"), the category field in the form and the tag on cards. Data is never touched:
-  turning the flag back on restores everything.
-- **Flip it for the demo.** Firebase console > Remote Config > `categories_enabled` > set `false` > Publish
-  changes. Open apps update within seconds (realtime); otherwise on the next resume/start after the fetch interval.
-  If the API key is restricted by HTTP referrer, allow `https://localhost/*`.
+> **Decisión:** se descartó `cordova-plugin-firebasex`. Para un flag booleano agregaría una dependencia nativa, un `google-services.json` y cambios en Gradle (además de tocar `config.xml` y los archivos de plataforma).
 
-## Visual language
-
-Design tokens live in `src/theme/variables.scss` as CSS custom properties (`--app-*` for the
-app, `--ion-*` mapped onto Ionic), with a light and a dark set. Components consume the tokens
-(`--app-surface`, `--app-radius-lg`, ...) and never hard-code colors. The typeface (Lexend Deca)
-is self-hosted through `@fontsource-variable/lexend-deca`, so it works offline.
-
-### Sheet modals
-
-Form modals use `class="auto-sheet"` with breakpoints `[0, 1]` and initial breakpoint `1` (exposed by the page from its `*.page.constants.ts`).
-The rules in `src/global.scss` (`--height: auto`, relative `.ion-page`) make the sheet fit its
-content. Put the content directly in the modal (no `ion-content`), or the height collapses.
-
-## Internationalization
-
-All user-facing copy lives in `src/assets/i18n/<lang>.json` (today only `es.json`), served as an
-asset and loaded over HTTP by `TranslocoHttpLoader` (`src/app/core/i18n/`). The URL is relative
-(`assets/i18n/es.json`) so it also resolves inside Cordova's WebView. `provideI18n()` (called in
-`main.ts`) wires Transloco, ICU plurals (`@jsverse/transloco-messageformat`), `LOCALE_ID` and an
-app initializer that preloads the default language, so the first render never shows raw keys.
-
-- **Keys** are nested by area: `app.*` (tabs), `shared.*` (copy owned by shared molecules),
-  `tasks.*` and `categories.*` (pages, organisms, `form.*`, `actions.*` for labels and aria).
-- **Atoms stay input-driven**: they receive already-translated text. Molecules with intrinsic copy
-  (progress summary, color picker) use `shared.*`; organisms and pages use their feature's keys.
-- **Templates** use `| transloco` (with params: `'key' | transloco: { count }`); component code
-  uses `translateSignal(key, params)`. Plurals use ICU: `{count, plural, =0 {...} one {# ...} other {# ...}}`.
-- **Specs** get the real `es.json` through `provideTranslocoTesting()` (`src/testing/`), registered
-  globally in `src/test-setup.ts`, so assertions check the Spanish copy users see.
-
-To add a language (e.g. `en`): create `src/assets/i18n/en.json` with the same keys, add `'en'` to
-`AVAILABLE_LANGS` in `provide-i18n.ts` and register its Angular locale data. No component changes.
-
-## Development workflow
-
-### Live reload on Android
+### Capas
 
 ```
-npm run android:build                      # once: creates platforms/android/platform_www (cordova.js + plugins)
-npm run android:live                       # first booted device/emulator
-npm run android:live -- --emulator         # or --device, or --target <id>
-npm run android:live -- --host 192.168.1.20   # override the host (or env LIVERELOAD_HOST)
+FeatureFlagPort                (contrato; isEnabled(key) devuelve un signal)
+  ← FirebaseFeatureFlagAdapter (signals, nunca lanza)
+      ← RemoteConfigClient     (costura abstracta delgada)
+          ← FirebaseRemoteConfigClient  (único archivo que toca el SDK; inicializa la app de Firebase una vez, de forma diferida)
 ```
 
-`ionic cordova run android -l` does not work here: it injects cordova.js with Webpack transforms,
-which the esbuild `@angular/build:application` builder rejects. `scripts/android-livereload.mjs`
-replaces it:
+Los specs usan `FakeRemoteConfigClient` para el adapter y `provideFakeFeatureFlags(overrides?)` para todo lo demás (registrado globalmente en `src/test-setup.ts`).
 
-1. Generates `.livereload/index.html` (`src/index.html` + `<script src="cordova.js">`) and serves it with
-   `ng serve --configuration livereload` on `0.0.0.0:8100`. That configuration also serves
-   `platforms/android/platform_www`, so cordova.js and the SQLite plugin load from the dev server.
-2. Temporarily patches `config.xml` (backup in `config.xml.livereload.bak`): `<content>` points to
-   `http://<LAN IP>:8100`, plus `allow-navigation` and cleartext HTTP (Android 9+ blocks it).
-3. Runs `cordova run android` to install a debug APK that loads the dev server.
-4. On Ctrl+C it stops `ng serve`, restores `config.xml`, runs `cordova prepare android` and strips the
-   cleartext flag from the manifest. The installed app keeps pointing to the dev server until you run
-   `npm run android:run` again. A stale backup (crash) is restored on the next start.
+### Claves y valores por defecto
 
-Notes: the phone must be on the same Wi-Fi as the computer (the LAN IP also works for the emulator);
-macOS may ask to allow incoming connections for Node the first time. Virtual interfaces (VPN `utun*`,
-Docker, ...) are skipped when picking the IP. Edits to `src/` reload the WebView automatically.
+`FeatureFlag` (`feature-flags.enums.ts`) nombra los flags y `FEATURE_FLAG_DEFAULTS` guarda el valor local por defecto de cada uno. Los signals arrancan con esos valores y solo cambian tras un fetch exitoso; por eso, sin conexión o con el SDK no soportado, la app se comporta con los valores por defecto (o con los que el SDK dejó en caché en IndexedDB).
+
+### Cableado
+
+`provideFeatureFlags(environment)` en `app.config.ts` enlaza el puerto y el cliente, y registra `initializeFeatureFlags`, que hace competir `init()` contra `initTimeoutMs` (2 s): el primer render nunca espera más que eso y los signals se actualizan cuando termina el fetch. La configuración (`firebase` + `remoteConfig`) vive en `src/environments/` (`@env/*`); los valores de la configuración web son identificadores públicos.
+
+### Rutas de actualización
+
+| Ruta               | Mecanismo                                                                                               |
+| ------------------ | ------------------------------------------------------------------------------------------------------- |
+| Arranque           | `init()` con tope de `initTimeoutMs` (2 s)                                                              |
+| Tiempo real        | `onConfigUpdate`: cada push llama a `activate()` y sincroniza los signals, sin reiniciar la app         |
+| Al volver a la app | `Platform.resume` dispara `refresh()`; es el respaldo cuando el stream de tiempo real no está conectado |
+
+### Intervalo de fetch
+
+`minimumFetchIntervalMillis`: **dev `0`**, **prod `60_000`** (1 minuto), para que una demo refleje los cambios rápido. El valor por defecto del SDK es 12 h; si se consulta más de unas pocas veces por hora, el backend aplica throttling (el SDK entonces sirve valores en caché). En un release real conviene subir este valor.
+
+### Qué controla `categories_enabled`
+
+- La ruta usa `canMatch: [featureFlagGuard(...)]` (redirige a `/tasks`).
+- El layout de tabs oculta la pestaña y sale de `/categories` si el flag se apaga.
+- La lista de tareas oculta los chips de filtro (el filtro vuelve a "todas"), el campo de categoría del formulario y la etiqueta en las tarjetas.
+- **Los datos nunca se tocan**: al volver a encender el flag se restaura todo.
+
+### Cómo cambiarlo en la demo
+
+1. Firebase console → Remote Config → `categories_enabled` → poner `false`.
+2. **Publish changes**.
+3. Las apps abiertas se actualizan en segundos (tiempo real); si no, en el próximo arranque o resume posterior al intervalo de fetch.
+
+Si la API key está restringida por HTTP referrer, hay que permitir `https://localhost/*`.
+
+## Lenguaje visual
+
+Los design tokens viven en `src/theme/variables.scss` como CSS custom properties (`--app-*` para la app, `--ion-*` mapeadas sobre Ionic), con un set claro y uno oscuro. Los componentes consumen los tokens (`--app-surface`, `--app-radius-lg`, ...) y nunca fijan colores a mano. La tipografía (Lexend Deca) está alojada localmente mediante `@fontsource-variable/lexend-deca`, así que funciona sin conexión.
+
+El modo oscuro sigue la preferencia del sistema (`@ionic/angular/css/palettes/dark.system.css` más el bloque `prefers-color-scheme: dark` de `variables.scss`).
+
+### Modales tipo sheet
+
+Los modales de formulario usan `class="auto-sheet"` con breakpoints `[0, 1]` y breakpoint inicial `1` (la page los expone desde su `*.page.constants.ts`). Las reglas de `src/global.scss` (`--height: auto`, `.ion-page` relativo) hacen que el sheet se ajuste a su contenido.
+
+> **Importante:** el contenido va directamente en el modal (sin `ion-content`); de lo contrario la altura colapsa.
+
+## Internacionalización
+
+Todo el texto visible para el usuario vive en `src/assets/i18n/<idioma>.json` (hoy solo `es.json`), se sirve como asset y lo carga por HTTP `TranslocoHttpLoader` (`src/app/core/i18n/`). La URL es relativa (`assets/i18n/es.json`), así que también se resuelve dentro del WebView de Cordova.
+
+`provideI18n()` (llamada en `main.ts`) configura Transloco, los plurales ICU (`@jsverse/transloco-messageformat`), `LOCALE_ID` y un app initializer que precarga el idioma por defecto, de modo que el primer render nunca muestra claves sin traducir.
+
+- **Claves** anidadas por área: `app.*` (tabs), `shared.*` (texto de las molecules compartidas), `tasks.*` y `categories.*` (pages, organisms, `form.*`, y `actions.*` para etiquetas y aria), más `feedback.*` (acciones comunes y error genérico).
+- **Los atoms se alimentan por input**: reciben el texto ya traducido. Las molecules con texto intrínseco (resumen de progreso, selector de color) usan `shared.*`; organisms y pages usan las claves de su feature.
+- **Templates** usan `| transloco` (con parámetros: `'key' | transloco: { count }`); el código de componentes usa `translateSignal(key, params)`. Los plurales usan ICU: `{count, plural, =0 {...} one {# ...} other {# ...}}`.
+- **Specs** reciben el `es.json` real mediante `provideTranslocoTesting()` (`src/testing/`), registrado globalmente en `src/test-setup.ts`, así que las aserciones verifican el texto en español que ve el usuario.
+
+Para agregar un idioma (p. ej. `en`): crear `src/assets/i18n/en.json` con las mismas claves, añadir `'en'` a `AVAILABLE_LANGS` en `provide-i18n.ts` y registrar los datos de locale de Angular. No hay que tocar componentes.
+
+## Flujo de desarrollo: live reload en Android
+
+```bash
+npm run android:build                         # una vez: crea platforms/android/platform_www (cordova.js + plugins)
+npm run android:live                          # primer dispositivo o emulador encendido
+npm run android:live -- --emulator            # o --device, o --target <id>
+npm run android:live -- --host 192.168.1.20   # fuerza el host (o la variable LIVERELOAD_HOST)
+```
+
+`ionic cordova run android -l` no funciona en este proyecto: inyecta `cordova.js` con transformaciones de Webpack, que el builder esbuild `@angular/build:application` rechaza. `scripts/android-livereload.mjs` lo reemplaza así:
+
+1. Genera `.livereload/index.html` (`src/index.html` + `<script src="cordova.js">`) y lo sirve con `ng serve --configuration livereload` en `0.0.0.0:8100`. Esa configuración también sirve `platforms/android/platform_www`, de modo que `cordova.js` y el plugin de SQLite se cargan desde el dev server.
+2. Parchea temporalmente `config.xml` (respaldo en `config.xml.livereload.bak`): `<content>` apunta a `http://<IP de la LAN>:8100`, más `allow-navigation` y HTTP en texto plano (Android 9+ lo bloquea por defecto).
+3. Ejecuta `cordova run android` para instalar un APK debug que carga el dev server.
+4. Con Ctrl+C detiene `ng serve`, restaura `config.xml`, ejecuta `cordova prepare android` y quita el flag de texto plano del manifest. La app instalada sigue apuntando al dev server hasta que vuelvas a ejecutar `npm run android:run`. Un respaldo huérfano (por un crash) se restaura en el siguiente arranque.
+
+Notas:
+
+- El teléfono debe estar en la misma red Wi-Fi que el computador (la IP de la LAN también sirve para el emulador).
+- macOS puede pedir permiso para conexiones entrantes de Node la primera vez.
+- Las interfaces virtuales (VPN `utun*`, Docker, ...) se omiten al elegir la IP.
+- Los cambios en `src/` recargan el WebView automáticamente.
