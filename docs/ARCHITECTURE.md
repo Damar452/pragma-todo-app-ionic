@@ -32,18 +32,18 @@ Folders are created when the first file needs them; empty layers are not kept ar
 
 ## Layer rules
 
-| From         | May import                                                          |
-| ------------ | ------------------------------------------------------------------- |
-| `core`       | core, shared/utils                                                  |
-| `layout`     | core, atoms, molecules, templates, shared/utils                     |
-| `atoms`      | atoms, shared/utils                                                 |
-| `molecules`  | atoms, molecules, shared/utils                                      |
-| `templates`  | atoms, molecules, templates, shared/utils                           |
-| `domain`     | its own feature's domain, shared/utils                              |
-| `data`       | its own feature's domain and data, core, shared/utils               |
-| `state`      | its own feature's domain and data, any feature's state, core, utils |
-| `organisms`  | any feature's domain, atoms, molecules, own organisms, utils        |
-| `pages`      | everything above except other features' organisms                   |
+| From        | May import                                                          |
+| ----------- | ------------------------------------------------------------------- |
+| `core`      | core, shared/utils                                                  |
+| `layout`    | core, atoms, molecules, templates, shared/utils                     |
+| `atoms`     | atoms, shared/utils                                                 |
+| `molecules` | atoms, molecules, shared/utils                                      |
+| `templates` | atoms, molecules, templates, shared/utils                           |
+| `domain`    | its own feature's domain, shared/utils                              |
+| `data`      | its own feature's domain and data, core, shared/utils               |
+| `state`     | its own feature's domain and data, any feature's state, core, utils |
+| `organisms` | any feature's domain, atoms, molecules, own organisms, utils        |
+| `pages`     | everything above except other features' organisms                   |
 
 Key ideas behind them:
 
@@ -102,12 +102,16 @@ for cross-layer imports; relative imports are fine inside the same element.
   the next list, the signal is updated (optimistic), the repository persists it, and on failure
   the previous list is restored and the error rethrown (pages show an error toast).
   `TasksStore.remove()` returns a `{ task, index }` snapshot for `restore()` (undo);
-  `CategoriesStore.remove()` also calls `TasksStore.unassignCategory()`. Ids and time come from the
-  `ID_GENERATOR` / `CLOCK` tokens (`core/runtime`), so specs are deterministic.
+  `CategoriesStore.remove()` also calls `TasksStore.unassignCategory()`. Ids come from the
+  `ID_GENERATOR` token (`core/runtime`) and time from `DateService`, so specs are deterministic.
 - **App initializer.** `app.config.ts` is the composition root (providers moved out of `main.ts`).
   `provideAppInitializer(initializeAppData)` runs migrations, then
   `Promise.all([tasks.load(), categories.load()])`, before the first render; the native splash
   (`AutoHideSplashScreen=false`) stays up meanwhile.
+- **Dates and time.** `DateService` (`core/date`) is the single entry point: `now()` (epoch ms),
+  `today()` and `formatLongDate(date)` (capitalized, in the app `LOCALE_ID`). It delegates to the pure
+  helpers in `shared/utils`. Stores and pages never call `Date.now()` / `new Date()` / `Intl` directly;
+  specs use `provideFakeDate(now?)` (`core/date/testing/`).
 - **Feedback.** `FeedbackService` (`core/feedback`) wraps Ionic toasts/alerts with Transloco keys:
   `toast`, `toastError`, `toastWithUndo` (resolves `true` if "Deshacer" was tapped) and `confirm`.
 

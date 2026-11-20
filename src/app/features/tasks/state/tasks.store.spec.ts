@@ -6,7 +6,7 @@ import { aTask } from '../domain/task-fixture.testing';
 
 import { TasksStore } from './tasks.store';
 
-import { CLOCK } from '@core/runtime/clock';
+import { provideFakeDate } from '@core/date/testing/fake-date.service';
 import { ID_GENERATOR } from '@core/runtime/id-generator';
 import { LoadStatus } from '@core/state/load-status.enums';
 
@@ -19,7 +19,7 @@ function setup(initial = [aTask({ id: 'seed' })]) {
     providers: [
       { provide: TaskRepository, useValue: repository },
       { provide: ID_GENERATOR, useValue: () => `id-${++nextId}` },
-      { provide: CLOCK, useValue: () => NOW },
+      ...provideFakeDate(NOW),
     ],
   });
   return { repository, store: TestBed.inject(TasksStore) };

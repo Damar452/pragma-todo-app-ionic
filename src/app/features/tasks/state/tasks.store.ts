@@ -13,7 +13,7 @@ import { toggleTask } from '../domain/toggle-task';
 import { unassignCategory } from '../domain/unassign-category';
 import { updateTask } from '../domain/update-task';
 
-import { CLOCK } from '@core/runtime/clock';
+import { DateService } from '@core/date/date.service';
 import { ID_GENERATOR } from '@core/runtime/id-generator';
 import { LoadStatus } from '@core/state/load-status.enums';
 
@@ -27,7 +27,7 @@ import { LoadStatus } from '@core/state/load-status.enums';
 export class TasksStore {
   private readonly repository = inject(TaskRepository);
   private readonly generateId = inject(ID_GENERATOR);
-  private readonly now = inject(CLOCK);
+  private readonly dateService = inject(DateService);
 
   /** Insertion order, so an undo can put a task back at its exact index. */
   private readonly _tasks = signal<readonly Task[]>([]);
@@ -50,7 +50,7 @@ export class TasksStore {
   }
 
   async add(draft: TaskDraft): Promise<Task> {
-    const task = createTask(draft, { id: this.generateId(), now: this.now() });
+    const task = createTask(draft, { id: this.generateId(), now: this.dateService.now() });
     await this.commit([...this._tasks(), task]);
     return task;
   }

@@ -9,6 +9,7 @@ import { TaskListComponent } from '../../organisms/task-list/task-list.component
 
 import { TaskListPage } from './task-list.page';
 
+import { provideFakeDate } from '@core/date/testing/fake-date.service';
 import { ItemAction } from '@core/feedback/feedback.enums';
 import {
   FakeFeedbackService,
@@ -24,7 +25,12 @@ async function setup(tasks = [aTask({ id: 'a', title: 'Buy milk' })]) {
     aCategory({ id: 'c1', name: 'Home' }),
   ]);
   TestBed.configureTestingModule({
-    providers: [...taskProviders, ...categoryProviders, provideFakeFeedback()],
+    providers: [
+      ...taskProviders,
+      ...categoryProviders,
+      provideFakeFeedback(),
+      ...provideFakeDate(),
+    ],
   });
   const tasksStore = TestBed.inject(TasksStore);
   const categoriesStore = TestBed.inject(CategoriesStore);
@@ -53,6 +59,14 @@ describe('TaskListPage', () => {
 
     // Assert
     expect(fixture.nativeElement.textContent).toContain('Buy milk');
+  });
+
+  it('shows today as the capitalized long date subtitle', async () => {
+    // Arrange / Act
+    const { fixture } = await setup();
+
+    // Assert
+    expect(fixture.nativeElement.textContent).toContain('Viernes, 20 de noviembre');
   });
 
   it('toggles a task through the store and persists it', async () => {

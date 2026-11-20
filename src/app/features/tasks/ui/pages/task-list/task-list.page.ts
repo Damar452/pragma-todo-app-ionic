@@ -1,11 +1,4 @@
-import {
-  ChangeDetectionStrategy,
-  Component,
-  LOCALE_ID,
-  computed,
-  inject,
-  signal,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
 import { IonFabButton, IonHeader, IonIcon, IonModal, IonTitle, IonToolbar } from '@ionic/angular';
 import { TranslocoPipe } from '@jsverse/transloco';
 import { addIcons } from 'ionicons';
@@ -29,14 +22,13 @@ import {
   TASK_FEEDBACK_KEYS,
 } from './task-list.page.constants';
 
+import { DateService } from '@core/date/date.service';
 import { FEATURE_FLAG_DEFAULTS } from '@core/feature-flags/feature-flags';
 import { ItemAction } from '@core/feedback/feedback.enums';
 import { FeedbackService } from '@core/feedback/feedback.service';
 import { CategoriesStore } from '@features/categories/state/categories.store';
 import { ProgressSummaryComponent } from '@shared/ui/molecules/progress-summary/progress-summary.component';
 import { ListPageTemplateComponent } from '@shared/ui/templates/list-page-template/list-page-template.component';
-import { formatLongDate } from '@shared/utils/date/format-long-date';
-import { capitalize } from '@shared/utils/string/capitalize';
 
 @Component({
   selector: 'app-task-list-page',
@@ -62,7 +54,7 @@ export class TaskListPage {
   private readonly tasksStore = inject(TasksStore);
   private readonly categoriesStore = inject(CategoriesStore);
   private readonly feedback = inject(FeedbackService);
-  private readonly locale = inject(LOCALE_ID);
+  private readonly dateService = inject(DateService);
 
   protected readonly tasks = this.tasksStore.tasks;
   protected readonly categories = this.categoriesStore.categories;
@@ -71,7 +63,7 @@ export class TaskListPage {
   protected readonly categoriesEnabled = signal(FEATURE_FLAG_DEFAULTS.categories_enabled);
 
   /** Subtitle under the page title in the app locale, e.g. "Viernes, 20 de noviembre". */
-  protected readonly todayLabel = capitalize(formatLongDate(new Date(), this.locale), this.locale);
+  protected readonly todayLabel = this.dateService.formatLongDate(this.dateService.today());
 
   protected readonly modalBreakpoints = FORM_MODAL_BREAKPOINTS;
   protected readonly modalInitialBreakpoint = FORM_MODAL_INITIAL_BREAKPOINT;
