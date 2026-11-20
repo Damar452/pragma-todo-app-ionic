@@ -1,4 +1,4 @@
-import { KeyValueStorage } from '../key-value-storage';
+import { KeyValueStorage } from '@core/storage/key-value-storage';
 
 /** Map-backed fake of the storage port for specs. Values are cloned so callers cannot alias state. */
 export class InMemoryKeyValueStorage extends KeyValueStorage {

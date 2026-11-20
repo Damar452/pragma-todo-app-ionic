@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component, input } from '@angular/core';
 
-import { ColorDotComponent } from '../../atoms/color-dot/color-dot.component';
+import { ColorDotComponent } from '@shared/ui/atoms/color-dot/color-dot.component';
 
 @Component({
   selector: 'app-color-tag',

@@ -11,10 +11,6 @@ import { TranslocoPipe, translateSignal } from '@jsverse/transloco';
 import { addIcons } from 'ionicons';
 import { createOutline, ellipsisVertical, pricetag, trashOutline } from 'ionicons/icons';
 
-import { EMPTY_CATEGORY_TASK_STATS } from '../../../domain/category-task-stats.constants';
-import type { CategoryTaskStats } from '../../../domain/category-task-stats.model';
-import type { Category } from '../../../domain/category.model';
-
 import {
   CATEGORY_RING_SIZE,
   CATEGORY_RING_STROKE_WIDTH,
@@ -23,6 +19,9 @@ import {
   TASK_COUNT_KEY,
 } from './category-item.constants';
 
+import { EMPTY_CATEGORY_TASK_STATS } from '@features/categories/domain/category-task-stats.constants';
+import type { CategoryTaskStats } from '@features/categories/domain/category-task-stats.model';
+import type { Category } from '@features/categories/domain/category.model';
 import { IconBadgeComponent } from '@shared/ui/atoms/icon-badge/icon-badge.component';
 import { ProgressRingComponent } from '@shared/ui/atoms/progress-ring/progress-ring.component';
 import { toRatio } from '@shared/utils/number/to-ratio';

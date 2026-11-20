@@ -1,6 +1,6 @@
 import { Injectable, type Provider } from '@angular/core';
 
-import { DateService } from '../date.service';
+import { DateService } from '@core/date/date.service';
 
 /** Fixed point in time used by `provideFakeDate()` when none is given (2026-11-20 12:00 local). */
 export const FAKE_NOW = new Date(2026, 10, 20, 12).getTime();

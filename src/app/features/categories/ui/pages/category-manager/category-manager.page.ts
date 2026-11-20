@@ -4,15 +4,6 @@ import { TranslocoPipe } from '@jsverse/transloco';
 import { addIcons } from 'ionicons';
 import { add } from 'ionicons/icons';
 
-import type { CategoryDraft } from '../../../domain/category-draft.model';
-import { CATEGORY_COLORS } from '../../../domain/category-palette';
-import type { Category } from '../../../domain/category.model';
-import { countTasksByCategory } from '../../../domain/count-tasks-by-category';
-import { CategoriesStore } from '../../../state/categories.store';
-import { CategoryFormComponent } from '../../organisms/category-form/category-form.component';
-import type { NameTakenPredicate } from '../../organisms/category-form/category-form.models';
-import { CategoryListComponent } from '../../organisms/category-list/category-list.component';
-
 import {
   CATEGORY_FEEDBACK_KEYS,
   DELETE_CONFIRMATION_KEYS,
@@ -22,6 +13,14 @@ import {
 
 import { ItemAction } from '@core/feedback/feedback.enums';
 import { FeedbackService } from '@core/feedback/feedback.service';
+import type { CategoryDraft } from '@features/categories/domain/category-draft.model';
+import { CATEGORY_COLORS } from '@features/categories/domain/category-palette';
+import type { Category } from '@features/categories/domain/category.model';
+import { countTasksByCategory } from '@features/categories/domain/count-tasks-by-category';
+import { CategoriesStore } from '@features/categories/state/categories.store';
+import { CategoryFormComponent } from '@features/categories/ui/organisms/category-form/category-form.component';
+import type { NameTakenPredicate } from '@features/categories/ui/organisms/category-form/category-form.models';
+import { CategoryListComponent } from '@features/categories/ui/organisms/category-list/category-list.component';
 import { TasksStore } from '@features/tasks/state/tasks.store';
 import { ListPageTemplateComponent } from '@shared/ui/templates/list-page-template/list-page-template.component';
 

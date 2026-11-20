@@ -1,8 +1,8 @@
 import { TestBed } from '@angular/core/testing';
 
-import type { CategoryDraft } from '../../../domain/category-draft.model';
-
 import { CategoryFormComponent } from './category-form.component';
+
+import type { CategoryDraft } from '@features/categories/domain/category-draft.model';
 
 function setup() {
   const fixture = TestBed.createComponent(CategoryFormComponent);

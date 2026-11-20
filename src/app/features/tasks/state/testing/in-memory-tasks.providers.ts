@@ -1,8 +1,8 @@
 import type { Provider } from '@angular/core';
 
-import { TaskRepository } from '../../data/task.repository';
-import { InMemoryTaskRepository } from '../../data/testing/in-memory-task.repository';
-import type { Task } from '../../domain/task.model';
+import { TaskRepository } from '@features/tasks/data/task.repository';
+import { InMemoryTaskRepository } from '@features/tasks/data/testing/in-memory-task.repository';
+import type { Task } from '@features/tasks/domain/task.model';
 
 /**
  * Binds `TaskRepository` to an in-memory fake for page specs (pages may not

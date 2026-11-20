@@ -1,8 +1,8 @@
-import { matchTaskFilter } from '../../../domain/match-task-filter';
-import { TaskFilterKind } from '../../../domain/task-filter.enums';
-import type { TaskFilter, TaskFilterHandlers } from '../../../domain/task-filter.model';
-
 import { ALL_CHIP_ID, UNCATEGORIZED_CHIP_ID } from './category-filter.constants';
+
+import { matchTaskFilter } from '@features/tasks/domain/match-task-filter';
+import { TaskFilterKind } from '@features/tasks/domain/task-filter.enums';
+import type { TaskFilter, TaskFilterHandlers } from '@features/tasks/domain/task-filter.model';
 
 const CHIP_ID_BY_FILTER: TaskFilterHandlers<string> = {
   [TaskFilterKind.All]: () => ALL_CHIP_ID,

@@ -1,8 +1,8 @@
 import { TestBed } from '@angular/core/testing';
 
-import type { Task } from '../../../domain/task.model';
-
 import { TaskListComponent } from './task-list.component';
+
+import type { Task } from '@features/tasks/domain/task.model';
 
 const TASKS: Task[] = [
   { id: 't1', title: 'One', completed: false, categoryId: 'c1', createdAt: 1 },

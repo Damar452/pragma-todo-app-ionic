@@ -1,4 +1,4 @@
-import type { Task } from '../domain/task.model';
+import type { Task } from '@features/tasks/domain/task.model';
 
 /**
  * Persistence contract for tasks. The store depends on this abstraction, so

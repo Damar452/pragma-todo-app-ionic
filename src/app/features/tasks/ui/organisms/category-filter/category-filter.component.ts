@@ -1,8 +1,6 @@
 import { ChangeDetectionStrategy, Component, computed, input, output } from '@angular/core';
 import { translateSignal } from '@jsverse/transloco';
 
-import type { TaskFilter } from '../../../domain/task-filter.model';
-
 import {
   ALL_CHIP_ID,
   ALL_LABEL_KEY,
@@ -12,6 +10,7 @@ import {
 import { toChipId, toTaskFilter } from './category-filter.mappers';
 
 import type { Category } from '@features/categories/domain/category.model';
+import type { TaskFilter } from '@features/tasks/domain/task-filter.model';
 import { ChipSelectorComponent } from '@shared/ui/molecules/chip-selector/chip-selector.component';
 import type { ChipOption } from '@shared/ui/molecules/chip-selector/chip-selector.models';
 

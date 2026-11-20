@@ -1,5 +1,5 @@
-import type { Task } from '../../domain/task.model';
-import { TaskRepository } from '../task.repository';
+import { TaskRepository } from '@features/tasks/data/task.repository';
+import type { Task } from '@features/tasks/domain/task.model';
 
 /** Fake `TaskRepository` for store specs: keeps the list in memory and can fail on demand. */
 export class InMemoryTaskRepository extends TaskRepository {

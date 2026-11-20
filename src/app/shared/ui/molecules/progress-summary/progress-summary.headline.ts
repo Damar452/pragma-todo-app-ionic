@@ -1,9 +1,9 @@
+import { HEADLINE_KEYS, KEEP_GOING_RATIO_LIMIT } from './progress-summary.constants';
+
 import {
   PROGRESS_MAX_RATIO,
   PROGRESS_MIN_RATIO,
-} from '../../atoms/progress-ring/progress-ring.constants';
-
-import { HEADLINE_KEYS, KEEP_GOING_RATIO_LIMIT } from './progress-summary.constants';
+} from '@shared/ui/atoms/progress-ring/progress-ring.constants';
 
 export interface HeadlineContext {
   readonly total: number;

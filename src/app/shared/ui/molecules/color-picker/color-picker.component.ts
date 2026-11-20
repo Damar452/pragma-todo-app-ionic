@@ -4,7 +4,7 @@ import { TranslocoPipe } from '@jsverse/transloco';
 import { addIcons } from 'ionicons';
 import { checkmark } from 'ionicons/icons';
 
-import { ColorDotComponent } from '../../atoms/color-dot/color-dot.component';
+import { ColorDotComponent } from '@shared/ui/atoms/color-dot/color-dot.component';
 
 @Component({
   selector: 'app-color-picker',

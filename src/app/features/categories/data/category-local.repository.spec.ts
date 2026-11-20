@@ -1,12 +1,11 @@
 import { TestBed } from '@angular/core/testing';
 
-import { aCategory } from '../domain/category-fixture.testing';
-
 import { CategoryLocalRepository } from './category-local.repository';
 import { CATEGORIES_STORAGE_KEY } from './category-storage.constants';
 
 import { KeyValueStorage } from '@core/storage/key-value-storage';
 import { InMemoryKeyValueStorage } from '@core/storage/testing/in-memory-key-value-storage';
+import { aCategory } from '@features/categories/domain/category-fixture.testing';
 
 function setup() {
   const storage = new InMemoryKeyValueStorage();

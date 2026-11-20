@@ -1,14 +1,13 @@
 import { TestBed } from '@angular/core/testing';
 
-import { TaskRepository } from '../data/task.repository';
-import { InMemoryTaskRepository } from '../data/testing/in-memory-task.repository';
-import { aTask } from '../domain/task-fixture.testing';
-
 import { TasksStore } from './tasks.store';
 
 import { provideFakeDate } from '@core/date/testing/fake-date.service';
 import { ID_GENERATOR } from '@core/runtime/id-generator';
 import { LoadStatus } from '@core/state/load-status.enums';
+import { TaskRepository } from '@features/tasks/data/task.repository';
+import { InMemoryTaskRepository } from '@features/tasks/data/testing/in-memory-task.repository';
+import { aTask } from '@features/tasks/domain/task-fixture.testing';
 
 const NOW = 5000;
 

@@ -1,12 +1,11 @@
 import { Injectable, inject } from '@angular/core';
 
-import { parseTasks } from '../domain/parse-tasks';
-import type { Task } from '../domain/task.model';
-
 import { TASKS_STORAGE_KEY } from './task-storage.constants';
 import { TaskRepository } from './task.repository';
 
 import { KeyValueStorage } from '@core/storage/key-value-storage';
+import { parseTasks } from '@features/tasks/domain/parse-tasks';
+import type { Task } from '@features/tasks/domain/task.model';
 
 /** Stores the task list as one array under a single key; unreadable data reads as an empty list. */
 @Injectable()

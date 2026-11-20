@@ -4,17 +4,6 @@ import { TranslocoPipe } from '@jsverse/transloco';
 import { addIcons } from 'ionicons';
 import { add } from 'ionicons/icons';
 
-import { countCompletedTasks } from '../../../domain/count-completed-tasks';
-import { filterTasks } from '../../../domain/filter-tasks';
-import { resolveTaskFilter } from '../../../domain/resolve-task-filter';
-import type { TaskDraft } from '../../../domain/task-draft.model';
-import type { TaskFilter } from '../../../domain/task-filter.model';
-import type { Task } from '../../../domain/task.model';
-import { TasksStore } from '../../../state/tasks.store';
-import { CategoryFilterComponent } from '../../organisms/category-filter/category-filter.component';
-import { TaskFormComponent } from '../../organisms/task-form/task-form.component';
-import { TaskListComponent } from '../../organisms/task-list/task-list.component';
-
 import {
   FORM_MODAL_BREAKPOINTS,
   FORM_MODAL_INITIAL_BREAKPOINT,
@@ -27,6 +16,16 @@ import { FEATURE_FLAG_DEFAULTS } from '@core/feature-flags/feature-flags';
 import { ItemAction } from '@core/feedback/feedback.enums';
 import { FeedbackService } from '@core/feedback/feedback.service';
 import { CategoriesStore } from '@features/categories/state/categories.store';
+import { countCompletedTasks } from '@features/tasks/domain/count-completed-tasks';
+import { filterTasks } from '@features/tasks/domain/filter-tasks';
+import { resolveTaskFilter } from '@features/tasks/domain/resolve-task-filter';
+import type { TaskDraft } from '@features/tasks/domain/task-draft.model';
+import type { TaskFilter } from '@features/tasks/domain/task-filter.model';
+import type { Task } from '@features/tasks/domain/task.model';
+import { TasksStore } from '@features/tasks/state/tasks.store';
+import { CategoryFilterComponent } from '@features/tasks/ui/organisms/category-filter/category-filter.component';
+import { TaskFormComponent } from '@features/tasks/ui/organisms/task-form/task-form.component';
+import { TaskListComponent } from '@features/tasks/ui/organisms/task-list/task-list.component';
 import { ProgressSummaryComponent } from '@shared/ui/molecules/progress-summary/progress-summary.component';
 import { ListPageTemplateComponent } from '@shared/ui/templates/list-page-template/list-page-template.component';
 

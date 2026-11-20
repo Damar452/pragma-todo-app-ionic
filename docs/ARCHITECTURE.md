@@ -75,8 +75,19 @@ File naming: `*.constants.ts`, `*.enums.ts`, `*.models.ts`, `shared/utils/<topic
 
 ## Path aliases
 
-`@core/*`, `@shared/*` and `@features/*` map to `src/app/*` (see `tsconfig.json`). Use them
-for cross-layer imports; relative imports are fine inside the same element.
+TypeScript path aliases (`paths` in `tsconfig.json`) replace every parent-relative import:
+
+| Alias         | Points to            |
+| ------------- | -------------------- |
+| `@core/*`     | `src/app/core/*`     |
+| `@shared/*`   | `src/app/shared/*`   |
+| `@features/*` | `src/app/features/*` |
+| `@layout/*`   | `src/app/layout/*`   |
+| `@testing/*`  | `src/testing/*`      |
+| `@assets/*`   | `src/assets/*`       |
+
+`../` imports are forbidden (`no-restricted-imports` fails the lint). Only
+same-folder imports (`./x`) stay relative: they are the file's immediate neighbours.
 
 ## Data & state
 

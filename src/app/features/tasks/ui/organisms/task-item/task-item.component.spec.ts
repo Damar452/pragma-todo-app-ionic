@@ -1,8 +1,8 @@
 import { TestBed } from '@angular/core/testing';
 
-import type { Task } from '../../../domain/task.model';
-
 import { TaskItemComponent } from './task-item.component';
+
+import type { Task } from '@features/tasks/domain/task.model';
 
 const TASK: Task = {
   id: 't1',

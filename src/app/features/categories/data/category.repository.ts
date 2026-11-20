@@ -1,4 +1,4 @@
-import type { Category } from '../domain/category.model';
+import type { Category } from '@features/categories/domain/category.model';
 
 /**
  * Persistence contract for categories. Abstract class (not interface) so it

@@ -4,10 +4,6 @@ import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { IonButton, IonInput } from '@ionic/angular';
 import { TranslocoPipe } from '@jsverse/transloco';
 
-import type { CategoryDraft } from '../../../domain/category-draft.model';
-import { DEFAULT_CATEGORY_COLOR } from '../../../domain/category-palette';
-import type { Category } from '../../../domain/category.model';
-
 import {
   CATEGORY_FORM_EMPTY_NAME,
   CATEGORY_NAME_MAX_LENGTH,
@@ -17,6 +13,9 @@ import {
 import type { NameTakenPredicate } from './category-form.models';
 import { nameAvailable } from './category-form.validators';
 
+import type { CategoryDraft } from '@features/categories/domain/category-draft.model';
+import { DEFAULT_CATEGORY_COLOR } from '@features/categories/domain/category-palette';
+import type { Category } from '@features/categories/domain/category.model';
 import { ColorPickerComponent } from '@shared/ui/molecules/color-picker/color-picker.component';
 import { notBlank } from '@shared/utils/not-blank.validator';
 

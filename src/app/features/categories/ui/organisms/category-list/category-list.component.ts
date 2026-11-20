@@ -4,11 +4,10 @@ import { TranslocoPipe } from '@jsverse/transloco';
 import { addIcons } from 'ionicons';
 import { pricetagsOutline } from 'ionicons/icons';
 
-import { EMPTY_CATEGORY_TASK_STATS } from '../../../domain/category-task-stats.constants';
-import type { CategoryTaskStats } from '../../../domain/category-task-stats.model';
-import type { Category } from '../../../domain/category.model';
-import { CategoryItemComponent } from '../category-item/category-item.component';
-
+import { EMPTY_CATEGORY_TASK_STATS } from '@features/categories/domain/category-task-stats.constants';
+import type { CategoryTaskStats } from '@features/categories/domain/category-task-stats.model';
+import type { Category } from '@features/categories/domain/category.model';
+import { CategoryItemComponent } from '@features/categories/ui/organisms/category-item/category-item.component';
 import { EmptyStateComponent } from '@shared/ui/molecules/empty-state/empty-state.component';
 import { SectionHeaderComponent } from '@shared/ui/molecules/section-header/section-header.component';
 

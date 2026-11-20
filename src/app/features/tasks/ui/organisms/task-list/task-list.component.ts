@@ -4,10 +4,9 @@ import { TranslocoPipe } from '@jsverse/transloco';
 import { addIcons } from 'ionicons';
 import { checkboxOutline } from 'ionicons/icons';
 
-import type { Task } from '../../../domain/task.model';
-import { TaskItemComponent } from '../task-item/task-item.component';
-
 import type { Category } from '@features/categories/domain/category.model';
+import type { Task } from '@features/tasks/domain/task.model';
+import { TaskItemComponent } from '@features/tasks/ui/organisms/task-item/task-item.component';
 import { EmptyStateComponent } from '@shared/ui/molecules/empty-state/empty-state.component';
 import { SectionHeaderComponent } from '@shared/ui/molecules/section-header/section-header.component';
 

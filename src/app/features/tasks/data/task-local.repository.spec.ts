@@ -1,12 +1,11 @@
 import { TestBed } from '@angular/core/testing';
 
-import { aTask } from '../domain/task-fixture.testing';
-
 import { TaskLocalRepository } from './task-local.repository';
 import { TASKS_STORAGE_KEY } from './task-storage.constants';
 
 import { KeyValueStorage } from '@core/storage/key-value-storage';
 import { InMemoryKeyValueStorage } from '@core/storage/testing/in-memory-key-value-storage';
+import { aTask } from '@features/tasks/domain/task-fixture.testing';
 
 function setup() {
   const storage = new InMemoryKeyValueStorage();

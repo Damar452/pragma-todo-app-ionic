@@ -1,11 +1,6 @@
 import { TestBed } from '@angular/core/testing';
 import { By } from '@angular/platform-browser';
 
-import { aCategory } from '../../../domain/category-fixture.testing';
-import { CategoriesStore } from '../../../state/categories.store';
-import { provideInMemoryCategories } from '../../../state/testing/in-memory-categories.providers';
-import { CategoryListComponent } from '../../organisms/category-list/category-list.component';
-
 import { CategoryManagerPage } from './category-manager.page';
 
 import { ItemAction } from '@core/feedback/feedback.enums';
@@ -13,6 +8,10 @@ import {
   FakeFeedbackService,
   provideFakeFeedback,
 } from '@core/feedback/testing/fake-feedback.service';
+import { aCategory } from '@features/categories/domain/category-fixture.testing';
+import { CategoriesStore } from '@features/categories/state/categories.store';
+import { provideInMemoryCategories } from '@features/categories/state/testing/in-memory-categories.providers';
+import { CategoryListComponent } from '@features/categories/ui/organisms/category-list/category-list.component';
 import { aTask } from '@features/tasks/domain/task-fixture.testing';
 import { TasksStore } from '@features/tasks/state/tasks.store';
 import { provideInMemoryTasks } from '@features/tasks/state/testing/in-memory-tasks.providers';

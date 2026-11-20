@@ -1,8 +1,8 @@
 import { TestBed } from '@angular/core/testing';
 
-import type { TaskDraft } from '../../../domain/task-draft.model';
-
 import { TaskFormComponent } from './task-form.component';
+
+import type { TaskDraft } from '@features/tasks/domain/task-draft.model';
 
 function setup() {
   const fixture = TestBed.createComponent(TaskFormComponent);

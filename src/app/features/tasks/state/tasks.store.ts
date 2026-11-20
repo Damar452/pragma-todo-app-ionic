@@ -1,21 +1,20 @@
 import { Injectable, computed, inject, signal } from '@angular/core';
 
-import { TaskRepository } from '../data/task.repository';
-import { createTask } from '../domain/create-task';
-import { findRemovedTask } from '../domain/find-removed-task';
-import { removeTask } from '../domain/remove-task';
-import type { RemovedTask } from '../domain/removed-task.model';
-import { restoreTask } from '../domain/restore-task';
-import { sortTasks } from '../domain/sort-tasks';
-import type { TaskDraft } from '../domain/task-draft.model';
-import type { Task } from '../domain/task.model';
-import { toggleTask } from '../domain/toggle-task';
-import { unassignCategory } from '../domain/unassign-category';
-import { updateTask } from '../domain/update-task';
-
 import { DateService } from '@core/date/date.service';
 import { ID_GENERATOR } from '@core/runtime/id-generator';
 import { LoadStatus } from '@core/state/load-status.enums';
+import { TaskRepository } from '@features/tasks/data/task.repository';
+import { createTask } from '@features/tasks/domain/create-task';
+import { findRemovedTask } from '@features/tasks/domain/find-removed-task';
+import { removeTask } from '@features/tasks/domain/remove-task';
+import type { RemovedTask } from '@features/tasks/domain/removed-task.model';
+import { restoreTask } from '@features/tasks/domain/restore-task';
+import { sortTasks } from '@features/tasks/domain/sort-tasks';
+import type { TaskDraft } from '@features/tasks/domain/task-draft.model';
+import type { Task } from '@features/tasks/domain/task.model';
+import { toggleTask } from '@features/tasks/domain/toggle-task';
+import { unassignCategory } from '@features/tasks/domain/unassign-category';
+import { updateTask } from '@features/tasks/domain/update-task';
 
 /**
  * Single source of truth for tasks. Exposes read-only signals; every mutation

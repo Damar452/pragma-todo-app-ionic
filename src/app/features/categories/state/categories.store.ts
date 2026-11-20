@@ -1,16 +1,15 @@
 import { Injectable, LOCALE_ID, computed, inject, signal } from '@angular/core';
 
-import { CategoryRepository } from '../data/category.repository';
-import type { CategoryDraft } from '../domain/category-draft.model';
-import type { Category } from '../domain/category.model';
-import { createCategory } from '../domain/create-category';
-import { isCategoryNameTaken } from '../domain/is-category-name-taken';
-import { removeCategory } from '../domain/remove-category';
-import { sortCategories } from '../domain/sort-categories';
-import { updateCategory } from '../domain/update-category';
-
 import { ID_GENERATOR } from '@core/runtime/id-generator';
 import { LoadStatus } from '@core/state/load-status.enums';
+import { CategoryRepository } from '@features/categories/data/category.repository';
+import type { CategoryDraft } from '@features/categories/domain/category-draft.model';
+import type { Category } from '@features/categories/domain/category.model';
+import { createCategory } from '@features/categories/domain/create-category';
+import { isCategoryNameTaken } from '@features/categories/domain/is-category-name-taken';
+import { removeCategory } from '@features/categories/domain/remove-category';
+import { sortCategories } from '@features/categories/domain/sort-categories';
+import { updateCategory } from '@features/categories/domain/update-category';
 import { TasksStore } from '@features/tasks/state/tasks.store';
 
 /**

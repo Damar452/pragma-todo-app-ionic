@@ -1,8 +1,8 @@
 import { TestBed } from '@angular/core/testing';
 
-import type { TaskFilter } from '../../../domain/task-filter.model';
-
 import { CategoryFilterComponent } from './category-filter.component';
+
+import type { TaskFilter } from '@features/tasks/domain/task-filter.model';
 
 describe('CategoryFilterComponent', () => {
   function setup() {

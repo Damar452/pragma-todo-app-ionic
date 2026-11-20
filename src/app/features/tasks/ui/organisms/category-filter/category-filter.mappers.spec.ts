@@ -1,7 +1,7 @@
-import { TaskFilterKind } from '../../../domain/task-filter.enums';
-
 import { ALL_CHIP_ID, UNCATEGORIZED_CHIP_ID } from './category-filter.constants';
 import { toChipId, toTaskFilter } from './category-filter.mappers';
+
+import { TaskFilterKind } from '@features/tasks/domain/task-filter.enums';
 
 describe('category filter mappers', () => {
   describe('toChipId', () => {

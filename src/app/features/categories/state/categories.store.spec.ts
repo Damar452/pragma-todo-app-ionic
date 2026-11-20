@@ -1,13 +1,12 @@
 import { TestBed } from '@angular/core/testing';
 
-import { CategoryRepository } from '../data/category.repository';
-import { InMemoryCategoryRepository } from '../data/testing/in-memory-category.repository';
-import { aCategory } from '../domain/category-fixture.testing';
-
 import { CategoriesStore } from './categories.store';
 
 import { ID_GENERATOR } from '@core/runtime/id-generator';
 import { LoadStatus } from '@core/state/load-status.enums';
+import { CategoryRepository } from '@features/categories/data/category.repository';
+import { InMemoryCategoryRepository } from '@features/categories/data/testing/in-memory-category.repository';
+import { aCategory } from '@features/categories/domain/category-fixture.testing';
 import { TasksStore } from '@features/tasks/state/tasks.store';
 import { FakeTasksStore } from '@features/tasks/state/testing/fake-tasks.store';
 

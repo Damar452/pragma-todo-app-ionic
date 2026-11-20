@@ -24,9 +24,8 @@ import {
   trashOutline,
 } from 'ionicons/icons';
 
-import type { Task } from '../../../domain/task.model';
-
 import type { Category } from '@features/categories/domain/category.model';
+import type { Task } from '@features/tasks/domain/task.model';
 import { StatusPillComponent } from '@shared/ui/atoms/status-pill/status-pill.component';
 import { StatusPillTone } from '@shared/ui/atoms/status-pill/status-pill.enums';
 import { ColorTagComponent } from '@shared/ui/molecules/color-tag/color-tag.component';

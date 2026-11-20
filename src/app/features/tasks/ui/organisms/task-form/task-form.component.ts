@@ -3,12 +3,11 @@ import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { IonButton, IonInput, IonSelect, IonSelectOption } from '@ionic/angular';
 import { TranslocoPipe } from '@jsverse/transloco';
 
-import type { TaskDraft } from '../../../domain/task-draft.model';
-import type { Task } from '../../../domain/task.model';
-
 import { TASK_FORM_EMPTY_TITLE, TASK_TITLE_MAX_LENGTH } from './task-form.constants';
 
 import type { Category } from '@features/categories/domain/category.model';
+import type { TaskDraft } from '@features/tasks/domain/task-draft.model';
+import type { Task } from '@features/tasks/domain/task.model';
 import { notBlank } from '@shared/utils/not-blank.validator';
 
 @Component({

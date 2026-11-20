@@ -1,8 +1,12 @@
 import { Injectable, type Provider } from '@angular/core';
 
-import type { ItemAction } from '../feedback.enums';
-import type { ConfirmOptions, FeedbackParams, ItemActionOptions } from '../feedback.models';
-import { FeedbackService } from '../feedback.service';
+import type { ItemAction } from '@core/feedback/feedback.enums';
+import type {
+  ConfirmOptions,
+  FeedbackParams,
+  ItemActionOptions,
+} from '@core/feedback/feedback.models';
+import { FeedbackService } from '@core/feedback/feedback.service';
 
 /** Fake `FeedbackService` for page specs: records calls and answers with scripted outcomes. */
 @Injectable()

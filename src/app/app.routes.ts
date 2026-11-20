@@ -4,7 +4,7 @@ export const routes: Routes = [
   {
     path: '',
     loadComponent: () =>
-      import('./layout/tabs-layout/tabs-layout.component').then((m) => m.TabsLayoutComponent),
+      import('@layout/tabs-layout/tabs-layout.component').then((m) => m.TabsLayoutComponent),
     children: [
       {
         path: 'tasks',

@@ -1,12 +1,6 @@
 import { TestBed } from '@angular/core/testing';
 import { By } from '@angular/platform-browser';
 
-import { TaskFilterKind } from '../../../domain/task-filter.enums';
-import { aTask } from '../../../domain/task-fixture.testing';
-import { TasksStore } from '../../../state/tasks.store';
-import { provideInMemoryTasks } from '../../../state/testing/in-memory-tasks.providers';
-import { TaskListComponent } from '../../organisms/task-list/task-list.component';
-
 import { TaskListPage } from './task-list.page';
 
 import { provideFakeDate } from '@core/date/testing/fake-date.service';
@@ -18,6 +12,11 @@ import {
 import { aCategory } from '@features/categories/domain/category-fixture.testing';
 import { CategoriesStore } from '@features/categories/state/categories.store';
 import { provideInMemoryCategories } from '@features/categories/state/testing/in-memory-categories.providers';
+import { TaskFilterKind } from '@features/tasks/domain/task-filter.enums';
+import { aTask } from '@features/tasks/domain/task-fixture.testing';
+import { TasksStore } from '@features/tasks/state/tasks.store';
+import { provideInMemoryTasks } from '@features/tasks/state/testing/in-memory-tasks.providers';
+import { TaskListComponent } from '@features/tasks/ui/organisms/task-list/task-list.component';
 
 async function setup(tasks = [aTask({ id: 'a', title: 'Buy milk' })]) {
   const { repository: taskRepository, providers: taskProviders } = provideInMemoryTasks(tasks);

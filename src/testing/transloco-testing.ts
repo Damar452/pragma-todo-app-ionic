@@ -7,7 +7,7 @@ import {
 import { TranslocoTestingModule } from '@jsverse/transloco';
 import { provideTranslocoMessageformat } from '@jsverse/transloco-messageformat';
 
-import es from '../assets/i18n/es.json';
+import es from '@assets/i18n/es.json';
 
 /** The real Spanish catalog, so specs assert the copy users actually see. */
 export const ES_TRANSLATIONS = es;

@@ -1,5 +1,5 @@
-import type { Category } from '../../domain/category.model';
-import { CategoryRepository } from '../category.repository';
+import { CategoryRepository } from '@features/categories/data/category.repository';
+import type { Category } from '@features/categories/domain/category.model';
 
 /** Fake `CategoryRepository` for store specs: keeps the list in memory and can fail on demand. */
 export class InMemoryCategoryRepository extends CategoryRepository {

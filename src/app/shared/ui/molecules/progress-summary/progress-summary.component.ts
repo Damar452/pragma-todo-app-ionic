@@ -1,12 +1,6 @@
 import { ChangeDetectionStrategy, Component, computed, input } from '@angular/core';
 import { translateSignal } from '@jsverse/transloco';
 
-import { ProgressRingComponent } from '../../atoms/progress-ring/progress-ring.component';
-import {
-  PROGRESS_MAX_RATIO,
-  PROGRESS_MIN_RATIO,
-} from '../../atoms/progress-ring/progress-ring.constants';
-
 import {
   SUBTITLE_KEYS,
   SUMMARY_RING_COLOR,
@@ -16,6 +10,11 @@ import {
 } from './progress-summary.constants';
 import { resolveHeadlineKey } from './progress-summary.headline';
 
+import { ProgressRingComponent } from '@shared/ui/atoms/progress-ring/progress-ring.component';
+import {
+  PROGRESS_MAX_RATIO,
+  PROGRESS_MIN_RATIO,
+} from '@shared/ui/atoms/progress-ring/progress-ring.constants';
 import { clamp } from '@shared/utils/number/clamp';
 import { toRatio } from '@shared/utils/number/to-ratio';
 

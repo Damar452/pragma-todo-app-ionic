@@ -112,11 +112,23 @@ module.exports = defineConfig([
     settings: {
       'import/resolver': { typescript: { project: './tsconfig.json' } },
       // Path aliases are our own code: group them after third-party imports.
-      'import-x/internal-regex': '^@(core|shared|features)/',
+      'import-x/internal-regex': '^@(core|shared|features|layout|testing|assets)/',
       'boundaries/elements': ELEMENTS,
     },
     rules: {
       'boundaries/dependencies': ['error', { default: 'disallow', policies: POLICIES }],
+      // Use path aliases (@core/..., @features/...) instead of '../'; './' (same folder) is fine.
+      'no-restricted-imports': [
+        'error',
+        {
+          patterns: [
+            {
+              group: ['../*'],
+              message: 'Use a path alias (@core, @shared, @features, @layout, @testing, @assets).',
+            },
+          ],
+        },
+      ],
     },
   },
   {

@@ -1,12 +1,11 @@
 import { Injectable, inject } from '@angular/core';
 
-import type { Category } from '../domain/category.model';
-import { parseCategories } from '../domain/parse-categories';
-
 import { CATEGORIES_STORAGE_KEY } from './category-storage.constants';
 import { CategoryRepository } from './category.repository';
 
 import { KeyValueStorage } from '@core/storage/key-value-storage';
+import type { Category } from '@features/categories/domain/category.model';
+import { parseCategories } from '@features/categories/domain/parse-categories';
 
 /** Stores the category list as one array under a single key; unreadable data reads as an empty list. */
 @Injectable()

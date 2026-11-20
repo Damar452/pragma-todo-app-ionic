@@ -1,8 +1,8 @@
 import type { Provider } from '@angular/core';
 
-import { CategoryRepository } from '../../data/category.repository';
-import { InMemoryCategoryRepository } from '../../data/testing/in-memory-category.repository';
-import type { Category } from '../../domain/category.model';
+import { CategoryRepository } from '@features/categories/data/category.repository';
+import { InMemoryCategoryRepository } from '@features/categories/data/testing/in-memory-category.repository';
+import type { Category } from '@features/categories/domain/category.model';
 
 /**
  * Binds `CategoryRepository` to an in-memory fake for page specs (pages may not

@@ -1,9 +1,9 @@
 import { ChangeDetectionStrategy, Component, input, output } from '@angular/core';
 import { IonChip } from '@ionic/angular';
 
-import { ColorDotComponent } from '../../atoms/color-dot/color-dot.component';
-
 import type { ChipOption } from './chip-selector.models';
+
+import { ColorDotComponent } from '@shared/ui/atoms/color-dot/color-dot.component';
 
 @Component({
   selector: 'app-chip-selector',
