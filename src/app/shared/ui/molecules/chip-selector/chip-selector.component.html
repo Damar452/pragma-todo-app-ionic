@@ -1,0 +1,20 @@
+<div class="chips" role="group">
+  @for (option of options(); track option.id) {
+    <ion-chip
+      role="button"
+      tabindex="0"
+      class="chip"
+      [class.chip--selected]="option.id === selectedId()"
+      [outline]="false"
+      [attr.aria-pressed]="option.id === selectedId()"
+      (click)="selectedChange.emit(option.id)"
+      (keydown.enter)="selectedChange.emit(option.id)"
+      (keydown.space)="selectedChange.emit(option.id); $event.preventDefault()"
+    >
+      @if (option.color) {
+        <app-color-dot [color]="option.color" size="sm" />
+      }
+      <span class="chip-label">{{ option.label }}</span>
+    </ion-chip>
+  }
+</div>

@@ -1,0 +1,12 @@
+<div class="text">
+  <h2 class="headline">{{ headline() }}</h2>
+  <p class="subtitle">{{ subtitle() }}</p>
+</div>
+<app-progress-ring
+  [value]="ratio()"
+  [size]="64"
+  [strokeWidth]="6"
+  color="#FFFFFF"
+  trackColor="rgba(255, 255, 255, 0.28)"
+  [label]="subtitle()"
+/>

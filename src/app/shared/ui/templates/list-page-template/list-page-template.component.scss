@@ -1,0 +1,46 @@
+// Let the header and content be direct flex children of the routed ion-page.
+:host {
+  display: contents;
+}
+
+ion-toolbar {
+  --background: transparent;
+  --border-width: 0;
+  --min-height: 0;
+}
+
+// Decorative blurred blobs painted as soft radial gradients behind the content.
+ion-content {
+  --background:
+    radial-gradient(60% 34% at 0% 0%, var(--app-blob-lavender) 0%, transparent 100%),
+    radial-gradient(46% 28% at 100% 20%, var(--app-blob-mint) 0%, transparent 100%),
+    radial-gradient(52% 30% at 0% 62%, var(--app-blob-peach) 0%, transparent 100%),
+    radial-gradient(50% 28% at 100% 80%, var(--app-blob-sky) 0%, transparent 100%),
+    var(--app-bg);
+}
+
+.heading {
+  padding: 8px 20px 0;
+}
+
+.title {
+  margin: 0;
+  font-size: 28px;
+  font-weight: 600;
+  line-height: 1.2;
+  color: var(--app-text);
+}
+
+.subtitle {
+  margin: 4px 0 0;
+  font-size: 14px;
+  color: var(--app-text-muted);
+}
+
+.toolbar-slot {
+  padding: 16px 16px 8px;
+
+  &:empty {
+    display: none;
+  }
+}

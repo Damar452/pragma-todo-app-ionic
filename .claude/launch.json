@@ -1,0 +1,11 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "web",
+      "runtimeExecutable": "/opt/homebrew/opt/node@24/bin/npm",
+      "runtimeArgs": ["start"],
+      "port": 4200
+    }
+  ]
+}

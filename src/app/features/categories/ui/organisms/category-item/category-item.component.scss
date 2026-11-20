@@ -1,0 +1,51 @@
+// The card wrapper carries the shadow; the sliding container clips options to the rounded corners.
+:host {
+  display: block;
+  margin: 0 16px 12px;
+  border-radius: var(--app-radius-lg);
+  background: var(--app-surface);
+  box-shadow: var(--app-shadow-card);
+}
+
+ion-item-sliding {
+  border-radius: inherit;
+}
+
+ion-item {
+  --background: transparent;
+  --padding-start: 16px;
+  --inner-padding-end: 16px;
+  --min-height: 72px;
+
+  font-size: 15px;
+}
+
+ion-item-options {
+  border: 0;
+}
+
+app-icon-badge {
+  margin-inline-end: 12px;
+}
+
+.info {
+  flex: 1;
+  min-width: 0;
+  padding: 12px 0;
+}
+
+.name {
+  margin: 0;
+  overflow: hidden;
+  font-size: 15px;
+  font-weight: 500;
+  color: var(--app-text);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.count {
+  margin: 2px 0 0;
+  font-size: 12px;
+  color: var(--app-text-muted);
+}

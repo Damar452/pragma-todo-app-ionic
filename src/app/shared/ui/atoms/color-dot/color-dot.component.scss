@@ -1,0 +1,24 @@
+:host {
+  display: inline-flex;
+  flex: none;
+}
+
+.dot {
+  display: block;
+  border-radius: 50%;
+
+  &--sm {
+    width: 10px;
+    height: 10px;
+  }
+
+  &--md {
+    width: 16px;
+    height: 16px;
+  }
+
+  &--lg {
+    width: 32px;
+    height: 32px;
+  }
+}

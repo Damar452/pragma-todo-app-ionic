@@ -1,0 +1,29 @@
+<form class="form" [formGroup]="form" (ngSubmit)="submit()">
+  <ion-input
+    [label]="'categories.form.nameLabel' | transloco"
+    labelPlacement="stacked"
+    fill="outline"
+    [placeholder]="'categories.form.namePlaceholder' | transloco"
+    formControlName="name"
+    [counter]="true"
+    [maxlength]="maxLength"
+  />
+
+  <div class="color-section">
+    <p class="color-label">{{ 'categories.form.colorLabel' | transloco }}</p>
+    <app-color-picker
+      [colors]="colors()"
+      [selected]="color()"
+      (selectedChange)="form.controls.color.setValue($event)"
+    />
+  </div>
+
+  <div class="actions">
+    <ion-button type="submit" expand="block" class="primary-action" [disabled]="form.invalid">
+      {{ (category() ? 'categories.form.save' : 'categories.form.add') | transloco }}
+    </ion-button>
+    <ion-button type="button" expand="block" fill="clear" class="cancel" (click)="cancelled.emit()">
+      {{ 'categories.form.cancel' | transloco }}
+    </ion-button>
+  </div>
+</form>

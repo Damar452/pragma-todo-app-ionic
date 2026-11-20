@@ -1,0 +1,38 @@
+<form class="form" [formGroup]="form" (ngSubmit)="submit()">
+  <ion-input
+    [label]="'tasks.form.titleLabel' | transloco"
+    labelPlacement="stacked"
+    fill="outline"
+    [placeholder]="'tasks.form.titlePlaceholder' | transloco"
+    formControlName="title"
+    [counter]="true"
+    [maxlength]="maxLength"
+  />
+
+  @if (showCategory()) {
+    <ion-select
+      [label]="'tasks.form.categoryLabel' | transloco"
+      [cancelText]="'tasks.form.cancel' | transloco"
+      [okText]="'tasks.form.ok' | transloco"
+      labelPlacement="stacked"
+      fill="outline"
+      formControlName="categoryId"
+    >
+      <ion-select-option [value]="null">{{
+        'tasks.form.noCategory' | transloco
+      }}</ion-select-option>
+      @for (category of categories(); track category.id) {
+        <ion-select-option [value]="category.id">{{ category.name }}</ion-select-option>
+      }
+    </ion-select>
+  }
+
+  <div class="actions">
+    <ion-button type="submit" expand="block" class="primary-action" [disabled]="form.invalid">
+      {{ (task() ? 'tasks.form.save' : 'tasks.form.add') | transloco }}
+    </ion-button>
+    <ion-button type="button" expand="block" fill="clear" class="cancel" (click)="cancelled.emit()">
+      {{ 'tasks.form.cancel' | transloco }}
+    </ion-button>
+  </div>
+</form>

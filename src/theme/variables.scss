@@ -1,2 +1,109 @@
 // For information on how to create your own theme, please refer to:
 // https://ionicframework.com/docs/theming/
+
+// Brand primary: indigo.
+:root {
+  --ion-color-primary: #4f46e5;
+  --ion-color-primary-rgb: 79, 70, 229;
+  --ion-color-primary-contrast: #ffffff;
+  --ion-color-primary-contrast-rgb: 255, 255, 255;
+  --ion-color-primary-shade: #463eca;
+  --ion-color-primary-tint: #6158e8;
+
+  // Typography
+  --ion-font-family: 'Lexend Deca Variable', 'Lexend Deca', system-ui, -apple-system, 'Segoe UI',
+    Roboto, sans-serif;
+
+  // Radii
+  --app-radius-sm: 10px;
+  --app-radius-md: 14px;
+  --app-radius-lg: 20px;
+  --app-radius-xl: 28px;
+
+  // Surfaces and text (light)
+  --app-bg: #f7f6fd;
+  --app-surface: #ffffff;
+  --app-text: #24252c;
+  --app-text-muted: #6e6a7c;
+  --app-primary-soft: #eeebff;
+  --app-shadow-card: 0 6px 24px rgba(79, 70, 229, 0.08);
+  --app-gradient-hero: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
+  --app-fab-shadow: 0 10px 24px rgba(79, 70, 229, 0.35);
+
+  // Status colors used by pills (text color is darker than the base for contrast)
+  --app-success: #16a34a;
+  --app-success-text: #15803d;
+
+  // Decorative background blobs
+  --app-blob-lavender: #e4deff;
+  --app-blob-mint: #d6f5e8;
+  --app-blob-peach: #ffe6d5;
+  --app-blob-sky: #dcebff;
+
+  // Ionic mapping
+  --ion-background-color: var(--app-bg);
+  --ion-background-color-rgb: 247, 246, 253;
+  --ion-text-color: var(--app-text);
+  --ion-text-color-rgb: 36, 37, 44;
+  --ion-item-background: transparent;
+  --ion-toolbar-background: transparent;
+  --ion-toolbar-border-color: transparent;
+  --ion-tab-bar-background: var(--app-surface);
+  --ion-tab-bar-color: var(--app-text-muted);
+  --ion-tab-bar-color-selected: var(--ion-color-primary);
+  --ion-card-background: var(--app-surface);
+}
+
+// Dark mode. Selectors match Ionic's system palette (`:root.ios` / `:root.md`) so they win by order.
+@media (prefers-color-scheme: dark) {
+  :root,
+  :root.ios,
+  :root.md,
+  :root[mode='ios'],
+  :root[mode='md'] {
+    --ion-color-primary: #818cf8;
+    --ion-color-primary-rgb: 129, 140, 248;
+    --ion-color-primary-contrast: #000000;
+    --ion-color-primary-contrast-rgb: 0, 0, 0;
+    --ion-color-primary-shade: #7280da;
+    --ion-color-primary-tint: #8e99f9;
+
+    --app-bg: #0f0e17;
+    --app-surface: #1c1b29;
+    --app-text: #edebf7;
+    --app-text-muted: #a29db8;
+    --app-primary-soft: #2a2650;
+    --app-shadow-card: 0 6px 24px rgba(0, 0, 0, 0.35);
+    --app-fab-shadow: 0 10px 24px rgba(0, 0, 0, 0.45);
+
+    --app-success: #4ade80;
+    --app-success-text: #4ade80;
+
+    // Glows instead of pastel blobs
+    --app-blob-lavender: rgba(99, 102, 241, 0.28);
+    --app-blob-mint: rgba(16, 185, 129, 0.12);
+    --app-blob-peach: rgba(124, 58, 237, 0.22);
+    --app-blob-sky: rgba(56, 189, 248, 0.1);
+
+    --ion-background-color: var(--app-bg);
+    --ion-background-color-rgb: 15, 14, 23;
+    --ion-text-color: var(--app-text);
+    --ion-text-color-rgb: 237, 235, 247;
+    --ion-item-background: transparent;
+    --ion-toolbar-background: transparent;
+    --ion-toolbar-border-color: transparent;
+    --ion-tab-bar-background: var(--app-surface);
+    --ion-tab-bar-color: var(--app-text-muted);
+    --ion-tab-bar-color-selected: var(--ion-color-primary);
+    --ion-card-background: var(--app-surface);
+  }
+}
+
+.ion-color-primary {
+  --ion-color-base: var(--ion-color-primary);
+  --ion-color-base-rgb: var(--ion-color-primary-rgb);
+  --ion-color-contrast: var(--ion-color-primary-contrast);
+  --ion-color-contrast-rgb: var(--ion-color-primary-contrast-rgb);
+  --ion-color-shade: var(--ion-color-primary-shade);
+  --ion-color-tint: var(--ion-color-primary-tint);
+}

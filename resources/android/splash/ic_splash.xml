@@ -1,59 +1,82 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
   Android 12+ splash icon (no icon background): 288dp canvas, content kept
-  inside the centered 192dp safe circle. A clipboard with a three-item
-  checklist: two done, one pending.
+  inside the centered 192dp safe circle. A brand-gradient disc (#4F46E5 ->
+  #7C3AED, like the app's hero card and FAB) holding the clipboard checklist,
+  shown on the app's light lavender background (#F7F6FD, set in config.xml).
+  The clipboard reuses the 288-unit paths, scaled 0.75 around the center.
 -->
 <vector xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:aapt="http://schemas.android.com/aapt"
     android:width="288dp"
     android:height="288dp"
     android:viewportWidth="288"
     android:viewportHeight="288">
 
-    <!-- Clipboard card -->
-    <path
-        android:fillColor="#FFFFFF"
-        android:pathData="M106,88 H182 A14,14 0 0 1 196,102 V192 A14,14 0 0 1 182,206 H106 A14,14 0 0 1 92,192 V102 A14,14 0 0 1 106,88 Z" />
+    <!-- Gradient disc filling the safe circle -->
+    <path android:pathData="M144,48 A96,96 0 1 1 143.99,48 Z">
+        <aapt:attr name="android:fillColor">
+            <gradient
+                android:type="linear"
+                android:startX="76"
+                android:startY="76"
+                android:endX="212"
+                android:endY="212">
+                <item android:offset="0" android:color="#FF4F46E5" />
+                <item android:offset="1" android:color="#FF7C3AED" />
+            </gradient>
+        </aapt:attr>
+    </path>
 
-    <!-- Clipboard clip -->
-    <path
-        android:fillColor="#A5B4FC"
-        android:pathData="M130,78 H158 A6,6 0 0 1 164,84 V94 A6,6 0 0 1 158,100 H130 A6,6 0 0 1 124,94 V84 A6,6 0 0 1 130,78 Z" />
+    <group
+        android:scaleX="0.75"
+        android:scaleY="0.75"
+        android:translateX="36"
+        android:translateY="37.5">
 
-    <!-- Row 1: done -->
-    <path
-        android:fillColor="#4F46E5"
-        android:pathData="M112,111 H122 A4,4 0 0 1 126,115 V125 A4,4 0 0 1 122,129 H112 A4,4 0 0 1 108,125 V115 A4,4 0 0 1 112,111 Z" />
-    <path
-        android:strokeColor="#FFFFFF"
-        android:strokeWidth="2.5"
-        android:strokeLineCap="round"
-        android:strokeLineJoin="round"
-        android:pathData="M112,120 L116,124 L122,116" />
-    <path
-        android:fillColor="#C7D2FE"
-        android:pathData="M140,116 H176 A4,4 0 0 1 176,124 H140 A4,4 0 0 1 140,116 Z" />
+        <!-- Clipboard card + clip -->
+        <path
+            android:fillColor="#FFFFFF"
+            android:pathData="M106,88 H182 A14,14 0 0 1 196,102 V192 A14,14 0 0 1 182,206 H106 A14,14 0 0 1 92,192 V102 A14,14 0 0 1 106,88 Z" />
+        <path
+            android:fillColor="#C4B5FD"
+            android:pathData="M130,78 H158 A6,6 0 0 1 164,84 V94 A6,6 0 0 1 158,100 H130 A6,6 0 0 1 124,94 V84 A6,6 0 0 1 130,78 Z" />
 
-    <!-- Row 2: done -->
-    <path
-        android:fillColor="#4F46E5"
-        android:pathData="M112,141 H122 A4,4 0 0 1 126,145 V155 A4,4 0 0 1 122,159 H112 A4,4 0 0 1 108,155 V145 A4,4 0 0 1 112,141 Z" />
-    <path
-        android:strokeColor="#FFFFFF"
-        android:strokeWidth="2.5"
-        android:strokeLineCap="round"
-        android:strokeLineJoin="round"
-        android:pathData="M112,150 L116,154 L122,146" />
-    <path
-        android:fillColor="#C7D2FE"
-        android:pathData="M140,146 H170 A4,4 0 0 1 170,154 H140 A4,4 0 0 1 140,146 Z" />
+        <!-- Row 1: done -->
+        <path
+            android:fillColor="#4F46E5"
+            android:pathData="M112,111 H122 A4,4 0 0 1 126,115 V125 A4,4 0 0 1 122,129 H112 A4,4 0 0 1 108,125 V115 A4,4 0 0 1 112,111 Z" />
+        <path
+            android:strokeColor="#FFFFFF"
+            android:strokeWidth="2.5"
+            android:strokeLineCap="round"
+            android:strokeLineJoin="round"
+            android:pathData="M112,120 L116,124 L122,116" />
+        <path
+            android:fillColor="#DDD6FE"
+            android:pathData="M140,116 H176 A4,4 0 0 1 176,124 H140 A4,4 0 0 1 140,116 Z" />
 
-    <!-- Row 3: pending -->
-    <path
-        android:strokeColor="#4F46E5"
-        android:strokeWidth="2.5"
-        android:pathData="M112,171 H122 A4,4 0 0 1 126,175 V185 A4,4 0 0 1 122,189 H112 A4,4 0 0 1 108,185 V175 A4,4 0 0 1 112,171 Z" />
-    <path
-        android:fillColor="#818CF8"
-        android:pathData="M140,176 H166 A4,4 0 0 1 166,184 H140 A4,4 0 0 1 140,176 Z" />
+        <!-- Row 2: done -->
+        <path
+            android:fillColor="#4F46E5"
+            android:pathData="M112,141 H122 A4,4 0 0 1 126,145 V155 A4,4 0 0 1 122,159 H112 A4,4 0 0 1 108,155 V145 A4,4 0 0 1 112,141 Z" />
+        <path
+            android:strokeColor="#FFFFFF"
+            android:strokeWidth="2.5"
+            android:strokeLineCap="round"
+            android:strokeLineJoin="round"
+            android:pathData="M112,150 L116,154 L122,146" />
+        <path
+            android:fillColor="#DDD6FE"
+            android:pathData="M140,146 H170 A4,4 0 0 1 170,154 H140 A4,4 0 0 1 140,146 Z" />
+
+        <!-- Row 3: pending -->
+        <path
+            android:strokeColor="#7C3AED"
+            android:strokeWidth="2.5"
+            android:pathData="M112,171 H122 A4,4 0 0 1 126,175 V185 A4,4 0 0 1 122,189 H112 A4,4 0 0 1 108,185 V175 A4,4 0 0 1 112,171 Z" />
+        <path
+            android:fillColor="#A78BFA"
+            android:pathData="M140,176 H166 A4,4 0 0 1 166,184 H140 A4,4 0 0 1 140,176 Z" />
+    </group>
 </vector>

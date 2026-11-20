@@ -1,0 +1,17 @@
+<div class="grid" role="group" [attr.aria-label]="'shared.colorPicker.group' | transloco">
+  @for (color of colors(); track color) {
+    <button
+      type="button"
+      class="swatch"
+      [class.swatch--selected]="color === selected()"
+      [attr.aria-label]="'shared.colorPicker.swatch' | transloco: { color }"
+      [attr.aria-pressed]="color === selected()"
+      (click)="selectedChange.emit(color)"
+    >
+      <app-color-dot [color]="color" size="lg" />
+      @if (color === selected()) {
+        <ion-icon class="check" name="checkmark" aria-hidden="true" />
+      }
+    </button>
+  }
+</div>

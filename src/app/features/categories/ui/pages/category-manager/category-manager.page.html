@@ -1,13 +1,44 @@
-<ion-header [translucent]="true">
-  <ion-toolbar>
-    <ion-title>Categories</ion-title>
-  </ion-toolbar>
-</ion-header>
+<app-list-page-template
+  [title]="'categories.page.title' | transloco"
+  [subtitle]="'categories.page.subtitle' | transloco"
+>
+  <app-category-list
+    [categories]="categories()"
+    [statsByCategory]="statsByCategory()"
+    (edit)="openEdit($event)"
+    (remove)="onRemove($event)"
+  />
 
-<ion-content [fullscreen]="true">
-  <ion-header collapse="condense">
-    <ion-toolbar>
-      <ion-title size="large">Categories</ion-title>
-    </ion-toolbar>
-  </ion-header>
-</ion-content>
+  <ion-fab-button
+    slot-fab
+    [attr.aria-label]="'categories.actions.add' | transloco"
+    (click)="openNew()"
+  >
+    <ion-icon name="add" />
+  </ion-fab-button>
+
+  <ion-modal
+    [isOpen]="isFormOpen()"
+    class="auto-sheet"
+    [initialBreakpoint]="1"
+    [breakpoints]="[0, 1]"
+    (didDismiss)="closeForm()"
+  >
+    <ng-template>
+      <ion-header class="ion-no-border">
+        <ion-toolbar>
+          <ion-title
+            >{{ (editingCategory() ? 'categories.form.editTitle' : 'categories.form.newTitle') |
+            transloco }}</ion-title
+          >
+        </ion-toolbar>
+      </ion-header>
+      <app-category-form
+        [category]="editingCategory()"
+        [colors]="colors"
+        (save)="onSave($event)"
+        (cancelled)="closeForm()"
+      />
+    </ng-template>
+  </ion-modal>
+</app-list-page-template>

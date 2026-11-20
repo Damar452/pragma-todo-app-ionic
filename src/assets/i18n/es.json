@@ -1,0 +1,95 @@
+{
+  "app": {
+    "tabs": {
+      "tasks": "Tareas",
+      "categories": "Categorías"
+    }
+  },
+  "shared": {
+    "progress": {
+      "headline": {
+        "plan": "Planifica tu día",
+        "start": "¡Empecemos!",
+        "keepGoing": "¡Sigue así!",
+        "almostDone": "¡Ya casi terminas!",
+        "allDone": "¡Todo listo por hoy!"
+      },
+      "addFirst": "Agrega tu primera tarea",
+      "completedOf": "{completed} de {total} tareas completadas"
+    },
+    "colorPicker": {
+      "group": "Color",
+      "swatch": "Color {color}"
+    }
+  },
+  "tasks": {
+    "page": {
+      "title": "Hoy"
+    },
+    "section": {
+      "title": "Tareas"
+    },
+    "filter": {
+      "all": "Todas",
+      "uncategorized": "Sin categoría"
+    },
+    "status": {
+      "done": "Hecha",
+      "todo": "Pendiente"
+    },
+    "empty": {
+      "title": "No hay tareas aquí",
+      "message": "Toca + para agregar tu primera tarea"
+    },
+    "actions": {
+      "add": "Agregar tarea",
+      "complete": "Completar",
+      "completeTask": "Completar {title}",
+      "markPending": "Marcar como pendiente",
+      "edit": "Editar",
+      "delete": "Eliminar"
+    },
+    "form": {
+      "newTitle": "Nueva tarea",
+      "editTitle": "Editar tarea",
+      "titleLabel": "Título",
+      "titlePlaceholder": "¿Qué necesitas hacer?",
+      "categoryLabel": "Categoría",
+      "noCategory": "Sin categoría",
+      "add": "Agregar tarea",
+      "save": "Guardar cambios",
+      "cancel": "Cancelar",
+      "ok": "Aceptar"
+    }
+  },
+  "categories": {
+    "page": {
+      "title": "Categorías",
+      "subtitle": "Organiza tus tareas en grupos"
+    },
+    "section": {
+      "title": "Grupos"
+    },
+    "empty": {
+      "title": "Aún no tienes categorías",
+      "message": "Crea categorías para organizar tus tareas"
+    },
+    "taskCount": "{count, plural, =0 {Sin tareas} one {# tarea} other {# tareas}}",
+    "progressLabel": "Progreso de {name}",
+    "actions": {
+      "add": "Agregar categoría",
+      "edit": "Editar",
+      "delete": "Eliminar"
+    },
+    "form": {
+      "newTitle": "Nueva categoría",
+      "editTitle": "Editar categoría",
+      "nameLabel": "Nombre",
+      "namePlaceholder": "Ej. Trabajo",
+      "colorLabel": "Color",
+      "add": "Agregar categoría",
+      "save": "Guardar cambios",
+      "cancel": "Cancelar"
+    }
+  }
+}

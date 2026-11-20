@@ -1,0 +1,26 @@
+<svg class="svg" [attr.width]="size()" [attr.height]="size()" aria-hidden="true" focusable="false">
+  <circle
+    class="track"
+    [attr.cx]="center()"
+    [attr.cy]="center()"
+    [attr.r]="radius()"
+    [attr.stroke]="trackColor()"
+    [attr.stroke-width]="strokeWidth()"
+    fill="none"
+  />
+  <circle
+    class="value"
+    [attr.cx]="center()"
+    [attr.cy]="center()"
+    [attr.r]="radius()"
+    [attr.stroke]="color()"
+    [attr.stroke-width]="strokeWidth()"
+    [attr.stroke-dasharray]="circumference()"
+    [attr.stroke-dashoffset]="dashOffset()"
+    stroke-linecap="round"
+    fill="none"
+  />
+</svg>
+@if (showLabel()) {
+  <span class="label" [style.font-size.px]="fontSize()" aria-hidden="true">{{ percent() }}%</span>
+}

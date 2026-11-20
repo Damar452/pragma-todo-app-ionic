@@ -1,0 +1,49 @@
+// Floating, rounded tab bar. It stays in the flex flow of <ion-tabs>, so routed pages end above it
+// and their content is never hidden behind it.
+ion-tab-bar {
+  --background: var(--app-surface);
+  --border: 0;
+  --color: var(--app-text-muted);
+  --color-selected: var(--ion-color-primary);
+
+  width: auto;
+  height: 64px;
+  margin: 0 16px calc(16px + var(--ion-safe-area-bottom, 0px));
+  padding: 0 8px;
+  border-radius: var(--app-radius-xl);
+  box-shadow: var(--app-shadow-card);
+}
+
+ion-tab-button {
+  --color: var(--app-text-muted);
+  --color-selected: var(--ion-color-primary);
+  --background-focused: transparent;
+
+  position: relative;
+  font-size: 12px;
+  font-weight: 500;
+
+  // 4px dot under the selected tab.
+  &::after {
+    content: '';
+    position: absolute;
+    bottom: 6px;
+    left: 50%;
+    width: 4px;
+    height: 4px;
+    border-radius: 50%;
+    background: var(--ion-color-primary);
+    transform: translateX(-50%) scale(0);
+    transition: transform 0.2s ease;
+  }
+
+  &.tab-selected::after {
+    transform: translateX(-50%) scale(1);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  ion-tab-button::after {
+    transition: none;
+  }
+}

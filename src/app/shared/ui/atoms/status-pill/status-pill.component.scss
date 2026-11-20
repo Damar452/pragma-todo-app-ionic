@@ -1,0 +1,26 @@
+:host {
+  display: inline-flex;
+  flex: none;
+  align-items: center;
+  padding: 4px 10px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 500;
+  line-height: 1.2;
+  white-space: nowrap;
+}
+
+:host(.pill--success) {
+  color: var(--app-success-text);
+  background: color-mix(in srgb, var(--app-success) 14%, transparent);
+}
+
+:host(.pill--primary) {
+  color: var(--ion-color-primary);
+  background: var(--app-primary-soft);
+}
+
+:host(.pill--neutral) {
+  color: var(--app-text-muted);
+  background: color-mix(in srgb, var(--app-text-muted) 14%, transparent);
+}

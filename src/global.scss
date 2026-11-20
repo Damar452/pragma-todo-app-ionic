@@ -9,6 +9,9 @@
  * https://ionicframework.com/docs/layout/global-stylesheets
  */
 
+/* Self-hosted brand typeface (works offline) */
+@import '@fontsource-variable/lexend-deca/index.css';
+
 /* Core CSS required for Ionic components to work properly */
 @import "@ionic/angular/css/core.css";
 
@@ -35,3 +38,55 @@
 /* @import "@ionic/angular/css/palettes/dark.always.css"; */
 /* @import "@ionic/angular/css/palettes/dark.class.css"; */
 @import '@ionic/angular/css/palettes/dark.system.css';
+
+/* Modals: Ionic's dark palette re-declares these on `:root.ios ion-modal`; keep our surfaces. */
+:root.ios ion-modal,
+:root.md ion-modal,
+ion-modal {
+  --ion-background-color: var(--app-surface);
+  --ion-toolbar-background: transparent;
+  --ion-toolbar-border-color: transparent;
+  --ion-item-background: transparent;
+}
+
+/* Sheet modal that fits its content (see docs/ARCHITECTURE.md, "Sheet modals"). */
+ion-modal.auto-sheet {
+  --height: auto;
+  --border-radius: var(--app-radius-xl) var(--app-radius-xl) 0 0;
+
+  .ion-page {
+    position: relative;
+    display: block;
+    contain: content;
+  }
+
+  ion-header ion-toolbar {
+    --background: transparent;
+    --border-width: 0;
+  }
+
+  ion-title {
+    font-size: 18px;
+    font-weight: 600;
+  }
+
+  &::part(handle) {
+    width: 40px;
+    height: 5px;
+    background: var(--app-text-muted);
+    opacity: 0.5;
+  }
+}
+
+/* Primary FAB: gradient, 56px, soft indigo glow. */
+ion-fab-button {
+  --background: var(--app-gradient-hero);
+  --background-activated: var(--app-gradient-hero);
+  --background-hover: var(--app-gradient-hero);
+  --color: #ffffff;
+  --box-shadow: var(--app-fab-shadow);
+  --border-radius: 50%;
+
+  width: 56px;
+  height: 56px;
+}

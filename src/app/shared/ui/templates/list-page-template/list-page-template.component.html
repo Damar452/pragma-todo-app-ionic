@@ -1,0 +1,22 @@
+<ion-header class="ion-no-border">
+  <ion-toolbar />
+</ion-header>
+
+<ion-content [fullscreen]="true">
+  <div class="heading">
+    <h1 class="title">{{ title() }}</h1>
+    @if (subtitle(); as subtitle) {
+      <p class="subtitle">{{ subtitle }}</p>
+    }
+  </div>
+
+  <div class="toolbar-slot">
+    <ng-content select="[slot-toolbar]" />
+  </div>
+
+  <ng-content />
+
+  <ion-fab vertical="bottom" horizontal="end" slot="fixed">
+    <ng-content select="[slot-fab]" />
+  </ion-fab>
+</ion-content>

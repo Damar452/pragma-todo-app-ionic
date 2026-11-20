@@ -1,0 +1,21 @@
+:host {
+  display: inline-flex;
+  flex: none;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--app-radius-md);
+  color: var(--badge-color);
+  background: color-mix(in srgb, var(--badge-color) 16%, transparent);
+}
+
+:host(.badge--sm) {
+  width: 36px;
+  height: 36px;
+  font-size: 18px;
+}
+
+:host(.badge--md) {
+  width: 44px;
+  height: 44px;
+  font-size: 22px;
+}

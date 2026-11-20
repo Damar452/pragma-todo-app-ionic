@@ -11,6 +11,7 @@ const boundaries = require('eslint-plugin-boundaries');
  */
 const ELEMENTS = [
   { type: 'core', pattern: 'app/core' },
+  { type: 'layout', pattern: 'app/layout' },
   { type: 'shared-util', pattern: 'app/shared/utils' },
   { type: 'atom', pattern: 'app/shared/ui/atoms' },
   { type: 'molecule', pattern: 'app/shared/ui/molecules' },
@@ -35,6 +36,10 @@ const toSameFeature = (...types) => ({
 /** Who may import whom. Anything not listed here is an error. */
 const POLICIES = [
   { from: { element: { type: 'core' } }, allow: [to('core', 'shared-util')] },
+  {
+    from: { element: { type: 'layout' } },
+    allow: [to('core', 'shared-util', 'atom', 'molecule', 'template')],
+  },
   { from: { element: { type: 'shared-util' } }, allow: [to('shared-util')] },
   { from: { element: { type: 'atom' } }, allow: [to('atom', 'shared-util')] },
   { from: { element: { type: 'molecule' } }, allow: [to('atom', 'molecule', 'shared-util')] },

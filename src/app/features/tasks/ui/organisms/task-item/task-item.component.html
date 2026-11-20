@@ -1,0 +1,50 @@
+<ion-item-sliding>
+  <ion-item-options side="start">
+    <ion-item-option
+      color="success"
+      [attr.aria-label]="
+        (task().completed ? 'tasks.actions.markPending' : 'tasks.actions.complete') | transloco
+      "
+      (click)="toggleComplete.emit()"
+    >
+      <ion-icon slot="icon-only" name="checkmark-done-outline" />
+    </ion-item-option>
+  </ion-item-options>
+
+  <ion-item lines="none">
+    <ion-checkbox
+      slot="start"
+      [checked]="task().completed"
+      [attr.aria-label]="'tasks.actions.completeTask' | transloco: { title: task().title }"
+      (ionChange)="toggleComplete.emit()"
+    />
+    <div class="info">
+      @if (category(); as category) {
+        <app-color-tag [color]="category.color" [label]="category.name" />
+      }
+      <h3 class="title" [class.title--done]="task().completed">{{ task().title }}</h3>
+    </div>
+    <app-status-pill
+      slot="end"
+      [label]="(task().completed ? 'tasks.status.done' : 'tasks.status.todo') | transloco"
+      [tone]="task().completed ? 'success' : 'primary'"
+    />
+  </ion-item>
+
+  <ion-item-options side="end">
+    <ion-item-option
+      color="primary"
+      [attr.aria-label]="'tasks.actions.edit' | transloco"
+      (click)="edit.emit()"
+    >
+      <ion-icon slot="icon-only" name="create-outline" />
+    </ion-item-option>
+    <ion-item-option
+      color="danger"
+      [attr.aria-label]="'tasks.actions.delete' | transloco"
+      (click)="remove.emit()"
+    >
+      <ion-icon slot="icon-only" name="trash-outline" />
+    </ion-item-option>
+  </ion-item-options>
+</ion-item-sliding>

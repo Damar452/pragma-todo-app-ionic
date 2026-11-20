@@ -17,7 +17,7 @@
         <icon background="resources/android/icon/ic_launcher_background.xml" density="xxhdpi" foreground="resources/android/icon/ic_launcher_foreground.xml" src="resources/android/icon/xxhdpi.png" />
         <icon background="resources/android/icon/ic_launcher_background.xml" density="xxxhdpi" foreground="resources/android/icon/ic_launcher_foreground.xml" src="resources/android/icon/xxxhdpi.png" />
         <preference name="AndroidWindowSplashScreenAnimatedIcon" value="resources/android/splash/ic_splash.xml" />
-        <preference name="AndroidWindowSplashScreenBackground" value="#4F46E5" />
+        <preference name="AndroidWindowSplashScreenBackground" value="#F7F6FD" />
         <preference name="AutoHideSplashScreen" value="false" />
     </platform>
     <platform name="ios">

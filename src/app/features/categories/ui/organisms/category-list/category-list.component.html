@@ -1,0 +1,22 @@
+@if (categories().length > 0) {
+  <app-section-header
+    [title]="'categories.section.title' | transloco"
+    [count]="categories().length"
+  />
+  <ion-list>
+    @for (category of categories(); track category.id) {
+      <app-category-item
+        [category]="category"
+        [stats]="statsByCategory().get(category.id) ?? { total: 0, completed: 0 }"
+        (edit)="edit.emit(category)"
+        (remove)="remove.emit(category)"
+      />
+    }
+  </ion-list>
+} @else {
+  <app-empty-state
+    icon="pricetags-outline"
+    [title]="'categories.empty.title' | transloco"
+    [message]="'categories.empty.message' | transloco"
+  />
+}

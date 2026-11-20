@@ -1,13 +1,50 @@
-<ion-header [translucent]="true">
-  <ion-toolbar>
-    <ion-title>Tasks</ion-title>
-  </ion-toolbar>
-</ion-header>
+<app-list-page-template [title]="'tasks.page.title' | transloco" [subtitle]="todayLabel">
+  <div slot-toolbar class="toolbar-stack">
+    <app-progress-summary [completed]="completedCount()" [total]="tasks().length" />
+    @if (categoriesEnabled()) {
+    <app-category-filter
+      [categories]="categories()"
+      [filter]="filter()"
+      (filterChange)="filter.set($event)"
+    />
+    }
+  </div>
 
-<ion-content [fullscreen]="true">
-  <ion-header collapse="condense">
-    <ion-toolbar>
-      <ion-title size="large">Tasks</ion-title>
-    </ion-toolbar>
-  </ion-header>
-</ion-content>
+  <app-task-list
+    [tasks]="visibleTasks()"
+    [categories]="categories()"
+    (toggleComplete)="onToggle($event)"
+    (edit)="openEdit($event)"
+    (remove)="onRemove($event)"
+  />
+
+  <ion-fab-button slot-fab [attr.aria-label]="'tasks.actions.add' | transloco" (click)="openNew()">
+    <ion-icon name="add" />
+  </ion-fab-button>
+
+  <ion-modal
+    class="auto-sheet"
+    [isOpen]="isFormOpen()"
+    [initialBreakpoint]="1"
+    [breakpoints]="[0, 1]"
+    (didDismiss)="closeForm()"
+  >
+    <ng-template>
+      <ion-header class="ion-no-border">
+        <ion-toolbar>
+          <ion-title
+            >{{ (editingTask() ? 'tasks.form.editTitle' : 'tasks.form.newTitle') | transloco
+            }}</ion-title
+          >
+        </ion-toolbar>
+      </ion-header>
+      <app-task-form
+        [task]="editingTask()"
+        [categories]="categories()"
+        [showCategory]="categoriesEnabled()"
+        (save)="onSave($event)"
+        (cancelled)="closeForm()"
+      />
+    </ng-template>
+  </ion-modal>
+</app-list-page-template>
