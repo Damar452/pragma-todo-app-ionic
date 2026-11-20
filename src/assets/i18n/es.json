@@ -15,12 +15,21 @@
         "allDone": "¡Todo listo por hoy!"
       },
       "addFirst": "Agrega tu primera tarea",
-      "completedOf": "{completed} de {total} tareas completadas"
+      "completedOf": "{completed} de {total, plural, one {# tarea completada} other {# tareas completadas}}"
     },
     "colorPicker": {
       "group": "Color",
       "swatch": "Color {color}"
     }
+  },
+  "feedback": {
+    "undo": "Deshacer",
+    "itemActions": {
+      "edit": "Editar",
+      "delete": "Eliminar",
+      "cancel": "Cancelar"
+    },
+    "error": "Algo salió mal. Inténtalo de nuevo."
   },
   "tasks": {
     "page": {
@@ -46,8 +55,14 @@
       "complete": "Completar",
       "completeTask": "Completar {title}",
       "markPending": "Marcar como pendiente",
+      "more": "Más opciones para {title}",
       "edit": "Editar",
       "delete": "Eliminar"
+    },
+    "feedback": {
+      "created": "Tarea creada",
+      "updated": "Tarea actualizada",
+      "deleted": "Tarea eliminada"
     },
     "form": {
       "newTitle": "Nueva tarea",
@@ -78,14 +93,27 @@
     "progressLabel": "Progreso de {name}",
     "actions": {
       "add": "Agregar categoría",
+      "more": "Más opciones para {name}",
       "edit": "Editar",
       "delete": "Eliminar"
+    },
+    "feedback": {
+      "created": "Categoría creada",
+      "updated": "Categoría actualizada",
+      "deleted": "Categoría «{name}» eliminada"
+    },
+    "confirmDelete": {
+      "header": "¿Eliminar «{name}»?",
+      "message": "{count, plural, =0 {Esta categoría no tiene tareas.} one {Su # tarea quedará sin categoría.} other {Sus # tareas quedarán sin categoría.}}",
+      "confirm": "Eliminar",
+      "cancel": "Cancelar"
     },
     "form": {
       "newTitle": "Nueva categoría",
       "editTitle": "Editar categoría",
       "nameLabel": "Nombre",
       "namePlaceholder": "Ej. Trabajo",
+      "nameTaken": "Ya existe una categoría con ese nombre",
       "colorLabel": "Color",
       "add": "Agregar categoría",
       "save": "Guardar cambios",

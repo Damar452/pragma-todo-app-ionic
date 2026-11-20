@@ -90,3 +90,23 @@ ion-fab-button {
   width: 56px;
   height: 56px;
 }
+
+/* Destructive confirmation (e.g. deleting a category): red button text on every platform. */
+.app-alert .alert-button.alert-button-role-destructive {
+  color: var(--ion-color-danger);
+  font-weight: 600;
+}
+
+/* Item action sheet (⋮ menu): rounded sheet, red "Eliminar" on every platform. */
+.app-action-sheet {
+  --border-radius: var(--app-radius-xl) var(--app-radius-xl) 0 0;
+
+  .action-sheet-destructive {
+    --button-color: var(--ion-color-danger);
+    color: var(--ion-color-danger);
+
+    .action-sheet-icon {
+      color: var(--ion-color-danger);
+    }
+  }
+}

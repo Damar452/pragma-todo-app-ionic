@@ -30,4 +30,20 @@ describe('CategoryListComponent', () => {
     expect(text).toContain('Work');
     expect(text).toContain('3 tareas');
   });
+
+  it('forwards menuRequested with the category', () => {
+    // Arrange
+    const category = { id: 'c1', name: 'Work', color: '#4F46E5' };
+    const fixture = TestBed.createComponent(CategoryListComponent);
+    fixture.componentRef.setInput('categories', [category]);
+    fixture.detectChanges();
+    const requested: unknown[] = [];
+    fixture.componentInstance.menuRequested.subscribe((value) => requested.push(value));
+
+    // Act
+    fixture.nativeElement.querySelector('ion-button.menu-button').click();
+
+    // Assert
+    expect(requested).toEqual([category]);
+  });
 });

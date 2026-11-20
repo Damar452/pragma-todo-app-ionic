@@ -1,5 +1,5 @@
 <ion-item-sliding>
-  <ion-item lines="none">
+  <ion-item lines="none" button [detail]="false" (click)="edit.emit()">
     <app-icon-badge slot="start" icon="pricetag" [color]="category().color" />
     <div class="info">
       <h3 class="name">{{ category().name }}</h3>
@@ -13,6 +13,15 @@
       [color]="category().color"
       [label]="progressLabel()"
     />
+    <ion-button
+      slot="end"
+      class="menu-button"
+      fill="clear"
+      [attr.aria-label]="moreLabel()"
+      (click)="onMenu($event)"
+    >
+      <ion-icon slot="icon-only" name="ellipsis-vertical" />
+    </ion-button>
   </ion-item>
 
   <ion-item-options side="end">

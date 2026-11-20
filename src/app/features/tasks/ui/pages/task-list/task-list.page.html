@@ -4,7 +4,7 @@
     @if (categoriesEnabled()) {
     <app-category-filter
       [categories]="categories()"
-      [filter]="filter()"
+      [filter]="activeFilter()"
       (filterChange)="filter.set($event)"
     />
     }
@@ -16,6 +16,7 @@
     (toggleComplete)="onToggle($event)"
     (edit)="openEdit($event)"
     (remove)="onRemove($event)"
+    (menuRequested)="onMenu($event)"
   />
 
   <ion-fab-button slot-fab [attr.aria-label]="'tasks.actions.add' | transloco" (click)="openNew()">

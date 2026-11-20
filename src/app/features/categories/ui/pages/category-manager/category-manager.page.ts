@@ -10,13 +10,18 @@ import type { Category } from '../../../domain/category.model';
 import { countTasksByCategory } from '../../../domain/count-tasks-by-category';
 import { CategoriesStore } from '../../../state/categories.store';
 import { CategoryFormComponent } from '../../organisms/category-form/category-form.component';
+import type { NameTakenPredicate } from '../../organisms/category-form/category-form.models';
 import { CategoryListComponent } from '../../organisms/category-list/category-list.component';
 
 import {
+  CATEGORY_FEEDBACK_KEYS,
+  DELETE_CONFIRMATION_KEYS,
   FORM_MODAL_BREAKPOINTS,
   FORM_MODAL_INITIAL_BREAKPOINT,
 } from './category-manager.page.constants';
 
+import { ItemAction } from '@core/feedback/feedback.enums';
+import { FeedbackService } from '@core/feedback/feedback.service';
 import { TasksStore } from '@features/tasks/state/tasks.store';
 import { ListPageTemplateComponent } from '@shared/ui/templates/list-page-template/list-page-template.component';
 
@@ -40,6 +45,7 @@ import { ListPageTemplateComponent } from '@shared/ui/templates/list-page-templa
 export class CategoryManagerPage {
   private readonly categoriesStore = inject(CategoriesStore);
   private readonly tasksStore = inject(TasksStore);
+  private readonly feedback = inject(FeedbackService);
 
   protected readonly categories = this.categoriesStore.categories;
   protected readonly colors = CATEGORY_COLORS;
@@ -52,6 +58,12 @@ export class CategoryManagerPage {
   protected readonly statsByCategory = computed(() =>
     countTasksByCategory(this.tasksStore.tasks()),
   );
+
+  /** Flags names already used by another category; the one being edited may keep its own. */
+  protected readonly isNameTaken = computed<NameTakenPredicate>(() => {
+    const exceptId = this.editingCategory()?.id;
+    return (name) => this.categoriesStore.isNameTaken(name, exceptId);
+  });
 
   constructor() {
     addIcons({ add });
@@ -72,11 +84,61 @@ export class CategoryManagerPage {
     this.editingCategory.set(null);
   }
 
-  protected onSave(_draft: CategoryDraft): void {
+  protected async onSave(draft: CategoryDraft): Promise<void> {
+    const editing = this.editingCategory();
     this.closeForm();
+    await this.attempt(async () => {
+      if (editing) {
+        await this.categoriesStore.update(editing.id, draft);
+        await this.feedback.toast(CATEGORY_FEEDBACK_KEYS.updated);
+      } else {
+        await this.categoriesStore.add(draft);
+        await this.feedback.toast(CATEGORY_FEEDBACK_KEYS.created);
+      }
+    });
   }
 
-  protected onRemove(_category: Category): void {
-    // Wired to CategoriesStore in the base-app stage.
+  /** Asks first: deleting a category leaves its tasks without category. */
+  protected async onRemove(category: Category): Promise<void> {
+    const params = {
+      name: category.name,
+      count: this.statsByCategory().get(category.id)?.total ?? 0,
+    };
+    const confirmed = await this.feedback.confirm({
+      ...DELETE_CONFIRMATION_KEYS,
+      params,
+      destructive: true,
+    });
+    if (confirmed) {
+      await this.attempt(async () => {
+        await this.categoriesStore.remove(category.id);
+        await this.feedback.toast(CATEGORY_FEEDBACK_KEYS.deleted, { name: category.name });
+      });
+    }
+  }
+
+  /** Offers edit / delete for one category in a native action sheet. */
+  protected async onMenu(category: Category): Promise<void> {
+    const action = await this.feedback.chooseItemAction({ header: category.name });
+    if (action) {
+      await this.itemActionHandlers[action](category);
+    }
+  }
+
+  private readonly itemActionHandlers: Record<
+    ItemAction,
+    (category: Category) => void | Promise<void>
+  > = {
+    [ItemAction.Edit]: (category) => this.openEdit(category),
+    [ItemAction.Delete]: (category) => this.onRemove(category),
+  };
+
+  /** Runs a store action; a persistence failure (already rolled back by the store) becomes an error toast. */
+  private async attempt(action: () => Promise<void>): Promise<void> {
+    try {
+      await action();
+    } catch {
+      await this.feedback.toastError(CATEGORY_FEEDBACK_KEYS.error);
+    }
   }
 }

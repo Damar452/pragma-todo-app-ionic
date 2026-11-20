@@ -25,6 +25,7 @@ export class TaskListComponent {
   readonly toggleComplete = output<Task>();
   readonly edit = output<Task>();
   readonly remove = output<Task>();
+  readonly menuRequested = output<Task>();
 
   protected readonly categoriesById = computed(
     () => new Map(this.categories().map((category) => [category.id, category])),

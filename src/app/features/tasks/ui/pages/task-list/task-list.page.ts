@@ -13,6 +13,7 @@ import { add } from 'ionicons/icons';
 
 import { countCompletedTasks } from '../../../domain/count-completed-tasks';
 import { filterTasks } from '../../../domain/filter-tasks';
+import { resolveTaskFilter } from '../../../domain/resolve-task-filter';
 import type { TaskDraft } from '../../../domain/task-draft.model';
 import type { TaskFilter } from '../../../domain/task-filter.model';
 import type { Task } from '../../../domain/task.model';
@@ -25,9 +26,12 @@ import {
   FORM_MODAL_BREAKPOINTS,
   FORM_MODAL_INITIAL_BREAKPOINT,
   INITIAL_TASK_FILTER,
+  TASK_FEEDBACK_KEYS,
 } from './task-list.page.constants';
 
 import { FEATURE_FLAG_DEFAULTS } from '@core/feature-flags/feature-flags';
+import { ItemAction } from '@core/feedback/feedback.enums';
+import { FeedbackService } from '@core/feedback/feedback.service';
 import { CategoriesStore } from '@features/categories/state/categories.store';
 import { ProgressSummaryComponent } from '@shared/ui/molecules/progress-summary/progress-summary.component';
 import { ListPageTemplateComponent } from '@shared/ui/templates/list-page-template/list-page-template.component';
@@ -57,6 +61,7 @@ import { capitalize } from '@shared/utils/string/capitalize';
 export class TaskListPage {
   private readonly tasksStore = inject(TasksStore);
   private readonly categoriesStore = inject(CategoriesStore);
+  private readonly feedback = inject(FeedbackService);
   private readonly locale = inject(LOCALE_ID);
 
   protected readonly tasks = this.tasksStore.tasks;
@@ -77,7 +82,15 @@ export class TaskListPage {
 
   protected readonly completedCount = computed(() => countCompletedTasks(this.tasks()));
 
-  protected readonly visibleTasks = computed(() => filterTasks(this.tasks(), this.filter()));
+  /** The selected filter, or "all" when its category was deleted meanwhile. */
+  protected readonly activeFilter = computed(() =>
+    resolveTaskFilter(
+      this.filter(),
+      this.categories().map((category) => category.id),
+    ),
+  );
+
+  protected readonly visibleTasks = computed(() => filterTasks(this.tasks(), this.activeFilter()));
 
   constructor() {
     addIcons({ add });
@@ -98,15 +111,53 @@ export class TaskListPage {
     this.editingTask.set(null);
   }
 
-  protected onSave(_draft: TaskDraft): void {
+  protected async onSave(draft: TaskDraft): Promise<void> {
+    const editing = this.editingTask();
     this.closeForm();
+    await this.attempt(async () => {
+      if (editing) {
+        await this.tasksStore.update(editing.id, draft);
+        await this.feedback.toast(TASK_FEEDBACK_KEYS.updated);
+      } else {
+        await this.tasksStore.add(draft);
+        await this.feedback.toast(TASK_FEEDBACK_KEYS.created);
+      }
+    });
   }
 
-  protected onToggle(_task: Task): void {
-    // Wired to TasksStore in the base-app stage.
+  protected onToggle(task: Task): Promise<void> {
+    return this.attempt(() => this.tasksStore.toggle(task.id));
   }
 
-  protected onRemove(_task: Task): void {
-    // Wired to TasksStore in the base-app stage.
+  /** Removes the task right away and offers to undo it from the toast. */
+  protected onRemove(task: Task): Promise<void> {
+    return this.attempt(async () => {
+      const removed = await this.tasksStore.remove(task.id);
+      if (removed && (await this.feedback.toastWithUndo(TASK_FEEDBACK_KEYS.deleted))) {
+        await this.tasksStore.restore(removed);
+      }
+    });
+  }
+
+  /** Offers edit / delete for one task in a native action sheet. */
+  protected async onMenu(task: Task): Promise<void> {
+    const action = await this.feedback.chooseItemAction({ header: task.title });
+    if (action) {
+      await this.itemActionHandlers[action](task);
+    }
+  }
+
+  private readonly itemActionHandlers: Record<ItemAction, (task: Task) => void | Promise<void>> = {
+    [ItemAction.Edit]: (task) => this.openEdit(task),
+    [ItemAction.Delete]: (task) => this.onRemove(task),
+  };
+
+  /** Runs a store action; a persistence failure (already rolled back by the store) becomes an error toast. */
+  private async attempt(action: () => Promise<void>): Promise<void> {
+    try {
+      await action();
+    } catch {
+      await this.feedback.toastError(TASK_FEEDBACK_KEYS.error);
+    }
   }
 }

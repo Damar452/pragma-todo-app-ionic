@@ -19,6 +19,14 @@ describe('ProgressSummaryComponent', () => {
     expect(host.textContent).toContain('3 de 7 tareas completadas');
   });
 
+  it('uses the singular when there is a single task', () => {
+    // Arrange / Act
+    const host = render(1, 1);
+
+    // Assert
+    expect(host.textContent).toContain('1 de 1 tarea completada');
+  });
+
   it('invites the user to add a task when there are none', () => {
     // Arrange / Act
     const host = render(0, 0);

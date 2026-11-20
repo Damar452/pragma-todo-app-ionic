@@ -77,4 +77,42 @@ describe('CategoryItemComponent', () => {
     // Assert
     expect(edited).toBe(1);
   });
+
+  it('emits menuRequested, and not edit, when the ⋮ button is clicked', () => {
+    // Arrange
+    const fixture = setup();
+    let menus = 0;
+    let edits = 0;
+    fixture.componentInstance.menuRequested.subscribe(() => menus++);
+    fixture.componentInstance.edit.subscribe(() => edits++);
+
+    // Act
+    fixture.nativeElement.querySelector('ion-button.menu-button').click();
+
+    // Assert
+    expect(menus).toBe(1);
+    expect(edits).toBe(0);
+  });
+
+  it('labels the ⋮ button with the category name', () => {
+    // Arrange / Act
+    const fixture = setup();
+
+    // Assert
+    const button: HTMLElement = fixture.nativeElement.querySelector('ion-button.menu-button');
+    expect(button.getAttribute('aria-label')).toBe('Más opciones para Work');
+  });
+
+  it('emits edit when the card body is tapped', () => {
+    // Arrange
+    const fixture = setup();
+    let edits = 0;
+    fixture.componentInstance.edit.subscribe(() => edits++);
+
+    // Act
+    fixture.nativeElement.querySelector('ion-item').click();
+
+    // Assert
+    expect(edits).toBe(1);
+  });
 });

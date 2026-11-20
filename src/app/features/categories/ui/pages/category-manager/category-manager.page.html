@@ -7,6 +7,7 @@
     [statsByCategory]="statsByCategory()"
     (edit)="openEdit($event)"
     (remove)="onRemove($event)"
+    (menuRequested)="onMenu($event)"
   />
 
   <ion-fab-button
@@ -36,6 +37,7 @@
       <app-category-form
         [category]="editingCategory()"
         [colors]="colors"
+        [isNameTaken]="isNameTaken()"
         (save)="onSave($event)"
         (cancelled)="closeForm()"
       />

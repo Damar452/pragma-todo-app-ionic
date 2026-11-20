@@ -1,8 +1,15 @@
 import { ChangeDetectionStrategy, Component, computed, input, output } from '@angular/core';
-import { IonIcon, IonItem, IonItemOption, IonItemOptions, IonItemSliding } from '@ionic/angular';
+import {
+  IonButton,
+  IonIcon,
+  IonItem,
+  IonItemOption,
+  IonItemOptions,
+  IonItemSliding,
+} from '@ionic/angular';
 import { TranslocoPipe, translateSignal } from '@jsverse/transloco';
 import { addIcons } from 'ionicons';
-import { createOutline, pricetag, trashOutline } from 'ionicons/icons';
+import { createOutline, ellipsisVertical, pricetag, trashOutline } from 'ionicons/icons';
 
 import { EMPTY_CATEGORY_TASK_STATS } from '../../../domain/category-task-stats.constants';
 import type { CategoryTaskStats } from '../../../domain/category-task-stats.model';
@@ -11,6 +18,7 @@ import type { Category } from '../../../domain/category.model';
 import {
   CATEGORY_RING_SIZE,
   CATEGORY_RING_STROKE_WIDTH,
+  MORE_LABEL_KEY,
   PROGRESS_LABEL_KEY,
   TASK_COUNT_KEY,
 } from './category-item.constants';
@@ -29,6 +37,7 @@ import { toRatio } from '@shared/utils/number/to-ratio';
     IonItemOptions,
     IonItemOption,
     IonItem,
+    IonButton,
     IonIcon,
     IconBadgeComponent,
     ProgressRingComponent,
@@ -41,6 +50,8 @@ export class CategoryItemComponent {
 
   readonly edit = output<void>();
   readonly remove = output<void>();
+  /** The ⋮ button was tapped; the page decides what to offer. */
+  readonly menuRequested = output<void>();
 
   protected readonly ringSize = CATEGORY_RING_SIZE;
   protected readonly ringStrokeWidth = CATEGORY_RING_STROKE_WIDTH;
@@ -55,12 +66,23 @@ export class CategoryItemComponent {
     computed(() => ({ name: this.category().name })),
   );
 
+  protected readonly moreLabel = translateSignal(
+    MORE_LABEL_KEY,
+    computed(() => ({ name: this.category().name })),
+  );
+
   protected readonly ratio = computed(() => {
     const { total, completed } = this.stats();
     return toRatio(completed, total);
   });
 
   constructor() {
-    addIcons({ createOutline, pricetag, trashOutline });
+    addIcons({ createOutline, ellipsisVertical, pricetag, trashOutline });
+  }
+
+  /** Opens the menu without letting the tap reach the card (which would edit). */
+  protected onMenu(event: Event): void {
+    event.stopPropagation();
+    this.menuRequested.emit();
   }
 }

@@ -5,18 +5,19 @@
       [attr.aria-label]="
         (task().completed ? 'tasks.actions.markPending' : 'tasks.actions.complete') | transloco
       "
-      (click)="toggleComplete.emit()"
+      (click)="onToggle()"
     >
       <ion-icon slot="icon-only" name="checkmark-done-outline" />
     </ion-item-option>
   </ion-item-options>
 
-  <ion-item lines="none">
+  <ion-item lines="none" button [detail]="false" (click)="onEdit()">
     <ion-checkbox
       slot="start"
       [checked]="task().completed"
       [attr.aria-label]="'tasks.actions.completeTask' | transloco: { title: task().title }"
-      (ionChange)="toggleComplete.emit()"
+      (click)="$event.stopPropagation()"
+      (ionChange)="onToggle()"
     />
     <div class="info">
       @if (category(); as category) {
@@ -29,20 +30,29 @@
       [label]="(task().completed ? 'tasks.status.done' : 'tasks.status.todo') | transloco"
       [tone]="tone()"
     />
+    <ion-button
+      slot="end"
+      class="menu-button"
+      fill="clear"
+      [attr.aria-label]="'tasks.actions.more' | transloco: { title: task().title }"
+      (click)="onMenu($event)"
+    >
+      <ion-icon slot="icon-only" name="ellipsis-vertical" />
+    </ion-button>
   </ion-item>
 
   <ion-item-options side="end">
     <ion-item-option
       color="primary"
       [attr.aria-label]="'tasks.actions.edit' | transloco"
-      (click)="edit.emit()"
+      (click)="onEdit()"
     >
       <ion-icon slot="icon-only" name="create-outline" />
     </ion-item-option>
     <ion-item-option
       color="danger"
       [attr.aria-label]="'tasks.actions.delete' | transloco"
-      (click)="remove.emit()"
+      (click)="onRemove()"
     >
       <ion-icon slot="icon-only" name="trash-outline" />
     </ion-item-option>

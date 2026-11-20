@@ -10,6 +10,7 @@
         [stats]="statsByCategory().get(category.id) ?? emptyStats"
         (edit)="edit.emit(category)"
         (remove)="remove.emit(category)"
+        (menuRequested)="menuRequested.emit(category)"
       />
     }
   </ion-list>

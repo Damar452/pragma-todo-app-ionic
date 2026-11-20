@@ -1,16 +1,206 @@
 import { TestBed } from '@angular/core/testing';
+import { By } from '@angular/platform-browser';
+
+import { TaskFilterKind } from '../../../domain/task-filter.enums';
+import { aTask } from '../../../domain/task-fixture.testing';
+import { TasksStore } from '../../../state/tasks.store';
+import { provideInMemoryTasks } from '../../../state/testing/in-memory-tasks.providers';
+import { TaskListComponent } from '../../organisms/task-list/task-list.component';
 
 import { TaskListPage } from './task-list.page';
 
+import { ItemAction } from '@core/feedback/feedback.enums';
+import {
+  FakeFeedbackService,
+  provideFakeFeedback,
+} from '@core/feedback/testing/fake-feedback.service';
+import { aCategory } from '@features/categories/domain/category-fixture.testing';
+import { CategoriesStore } from '@features/categories/state/categories.store';
+import { provideInMemoryCategories } from '@features/categories/state/testing/in-memory-categories.providers';
+
+async function setup(tasks = [aTask({ id: 'a', title: 'Buy milk' })]) {
+  const { repository: taskRepository, providers: taskProviders } = provideInMemoryTasks(tasks);
+  const { providers: categoryProviders } = provideInMemoryCategories([
+    aCategory({ id: 'c1', name: 'Home' }),
+  ]);
+  TestBed.configureTestingModule({
+    providers: [...taskProviders, ...categoryProviders, provideFakeFeedback()],
+  });
+  const tasksStore = TestBed.inject(TasksStore);
+  const categoriesStore = TestBed.inject(CategoriesStore);
+  await Promise.all([tasksStore.load(), categoriesStore.load()]);
+
+  const fixture = TestBed.createComponent(TaskListPage);
+  fixture.detectChanges();
+  const list: TaskListComponent = fixture.debugElement.query(
+    By.directive(TaskListComponent),
+  ).componentInstance;
+  return {
+    fixture,
+    page: fixture.componentInstance,
+    list,
+    tasksStore,
+    categoriesStore,
+    taskRepository,
+    feedback: TestBed.inject(FakeFeedbackService),
+  };
+}
+
 describe('TaskListPage', () => {
-  it('should create', () => {
+  it('lists the stored tasks', async () => {
+    // Arrange / Act
+    const { fixture } = await setup();
+
+    // Assert
+    expect(fixture.nativeElement.textContent).toContain('Buy milk');
+  });
+
+  it('toggles a task through the store and persists it', async () => {
     // Arrange
-    const fixture = TestBed.createComponent(TaskListPage);
+    const { list, taskRepository, tasksStore } = await setup();
 
     // Act
+    list.toggleComplete.emit(tasksStore.tasks()[0]);
+    await Promise.resolve();
+
+    // Assert
+    expect(taskRepository.tasks[0].completed).toBe(true);
+  });
+
+  it('creates a task from the form draft and confirms with a toast', async () => {
+    // Arrange
+    const { page, tasksStore, feedback } = await setup([]);
+
+    // Act
+    await page['onSave']({ title: 'Walk the dog', categoryId: 'c1' });
+
+    // Assert
+    expect(tasksStore.tasks()[0]).toMatchObject({ title: 'Walk the dog', categoryId: 'c1' });
+    expect(feedback.toasts.map((toast) => toast.key)).toEqual(['tasks.feedback.created']);
+  });
+
+  it('updates the task being edited and confirms with a toast', async () => {
+    // Arrange
+    const { page, tasksStore, feedback } = await setup();
+    page['openEdit'](tasksStore.tasks()[0]);
+
+    // Act
+    await page['onSave']({ title: 'Buy oat milk', categoryId: null });
+
+    // Assert
+    expect(tasksStore.tasks()[0].title).toBe('Buy oat milk');
+    expect(feedback.toasts.map((toast) => toast.key)).toEqual(['tasks.feedback.updated']);
+    expect(page['isFormOpen']()).toBe(false);
+  });
+
+  it('removes a task and offers to undo', async () => {
+    // Arrange
+    const { list, tasksStore, feedback } = await setup();
+
+    // Act
+    list.remove.emit(tasksStore.tasks()[0]);
+    await vi.waitFor(() => expect(feedback.undoToasts).toHaveLength(1));
+
+    // Assert
+    expect(feedback.undoToasts[0].key).toBe('tasks.feedback.deleted');
+    expect(tasksStore.tasks()).toEqual([]);
+  });
+
+  it('restores the task when the user taps undo', async () => {
+    // Arrange
+    const { page, tasksStore, feedback } = await setup();
+    feedback.undoAnswer = true;
+
+    // Act
+    await page['onRemove'](tasksStore.tasks()[0]);
+
+    // Assert
+    expect(tasksStore.tasks().map((task) => task.id)).toEqual(['a']);
+  });
+
+  it('keeps the task removed when the undo toast times out', async () => {
+    // Arrange
+    const { page, tasksStore, feedback } = await setup();
+    feedback.undoAnswer = false;
+
+    // Act
+    await page['onRemove'](tasksStore.tasks()[0]);
+
+    // Assert
+    expect(tasksStore.tasks()).toEqual([]);
+  });
+
+  it('shows an error toast and keeps the task when persisting fails', async () => {
+    // Arrange
+    const { page, tasksStore, taskRepository, feedback } = await setup();
+    taskRepository.failNextSaveWith = new Error('disk');
+
+    // Act
+    await page['onToggle'](tasksStore.tasks()[0]);
+
+    // Assert
+    expect(feedback.errors.map((error) => error.key)).toEqual(['feedback.error']);
+    expect(tasksStore.tasks()[0].completed).toBe(false);
+  });
+
+  it('falls back to all tasks when the filtered category is deleted', async () => {
+    // Arrange
+    const { fixture, page, list, categoriesStore } = await setup([
+      aTask({ id: 'a', categoryId: 'c1' }),
+      aTask({ id: 'b', categoryId: null }),
+    ]);
+    page['filter'].set({ kind: TaskFilterKind.Category, categoryId: 'c1' });
+    fixture.detectChanges();
+    expect(list.tasks()).toHaveLength(1);
+
+    // Act
+    await categoriesStore.remove('c1');
     fixture.detectChanges();
 
     // Assert
-    expect(fixture.componentInstance).toBeTruthy();
+    expect(list.tasks()).toHaveLength(2);
+  });
+});
+
+describe('TaskListPage item menu', () => {
+  it('opens the edit form for the task when "Editar" is chosen', async () => {
+    // Arrange
+    const { list, tasksStore, feedback, page } = await setup();
+    feedback.itemActionAnswer = ItemAction.Edit;
+
+    // Act
+    list.menuRequested.emit(tasksStore.tasks()[0]);
+    await vi.waitFor(() => expect(page['isFormOpen']()).toBe(true));
+
+    // Assert
+    expect(feedback.itemActionSheets).toEqual([{ header: 'Buy milk' }]);
+    expect(page['editingTask']()?.id).toBe('a');
+  });
+
+  it('removes the task with an undo toast when "Eliminar" is chosen', async () => {
+    // Arrange
+    const { list, tasksStore, feedback } = await setup();
+    feedback.itemActionAnswer = ItemAction.Delete;
+
+    // Act
+    list.menuRequested.emit(tasksStore.tasks()[0]);
+    await vi.waitFor(() => expect(feedback.undoToasts).toHaveLength(1));
+
+    // Assert
+    expect(tasksStore.tasks()).toEqual([]);
+  });
+
+  it('does nothing when the sheet is cancelled', async () => {
+    // Arrange
+    const { page, tasksStore, feedback } = await setup();
+    feedback.itemActionAnswer = null;
+
+    // Act
+    await page['onMenu'](tasksStore.tasks()[0]);
+
+    // Assert
+    expect(page['isFormOpen']()).toBe(false);
+    expect(tasksStore.tasks()).toHaveLength(1);
+    expect(feedback.undoToasts).toEqual([]);
   });
 });

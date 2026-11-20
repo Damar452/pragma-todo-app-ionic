@@ -9,7 +9,7 @@ The app is organized **by feature** (the folder tree says "tasks" and "categorie
 
 ```
 src/app/
-├── core/                      App-wide singletons and ports/adapters (storage, feature flags, platform)
+├── core/                      App-wide singletons and ports/adapters (storage, feedback, runtime, feature flags, platform)
 ├── layout/                    App shell (tabs layout) around the routed features
 ├── shared/
 │   ├── ui/
@@ -77,6 +77,39 @@ File naming: `*.constants.ts`, `*.enums.ts`, `*.models.ts`, `shared/utils/<topic
 
 `@core/*`, `@shared/*` and `@features/*` map to `src/app/*` (see `tsconfig.json`). Use them
 for cross-layer imports; relative imports are fine inside the same element.
+
+## Data & state
+
+- **Storage port and adapter.** Repositories depend on the abstract `KeyValueStorage`
+  (`core/storage`). `IonicStorageAdapter` implements it with `@ionic/storage-angular` (v4 is
+  NgModule-only, so `provideStorage()` uses `importProvidersFrom(IonicStorageModule.forRoot(...))`).
+  Driver order: `cordovaSQLiteDriver` (native SQLite through `cordova-sqlite-storage`, on device),
+  then IndexedDB, then localStorage (browser). The SQLite driver is registered with
+  `defineDriver()` before `create()`; both run once, lazily, behind a memoized promise on the
+  first read/write. Specs use `InMemoryKeyValueStorage` (`core/storage/testing/`).
+- **Keys.** `todo:tasks` and `todo:categories` (each holds the whole array, constants in the
+  feature's `data/`) and `todo:schemaVersion` (`core/storage/storage.constants.ts`). Repositories
+  parse defensively (`parseTasks` / `parseCategories`): unreadable data reads as `[]`, invalid
+  items are dropped.
+- **Schema version & migrations.** `runMigrations(storage, migrations)` (`core/storage`) reads the
+  stored version (missing = 0), applies every newer migration in order and saves the version
+  after each one. The app's history lives in `src/app/app.migrations.ts` (app root: it spans both
+  features' keys, which a feature's `data/` may not do). Current version: **2** (v2 gives legacy
+  tasks `categoryId: null` and initializes the categories key to `[]`). Never edit an old
+  migration; append a new one.
+- **Stores.** `TasksStore` / `CategoriesStore` are the single source of truth, with read-only
+  signals (`status`, sorted `tasks` / `categories`). Every mutation: pure domain function computes
+  the next list, the signal is updated (optimistic), the repository persists it, and on failure
+  the previous list is restored and the error rethrown (pages show an error toast).
+  `TasksStore.remove()` returns a `{ task, index }` snapshot for `restore()` (undo);
+  `CategoriesStore.remove()` also calls `TasksStore.unassignCategory()`. Ids and time come from the
+  `ID_GENERATOR` / `CLOCK` tokens (`core/runtime`), so specs are deterministic.
+- **App initializer.** `app.config.ts` is the composition root (providers moved out of `main.ts`).
+  `provideAppInitializer(initializeAppData)` runs migrations, then
+  `Promise.all([tasks.load(), categories.load()])`, before the first render; the native splash
+  (`AutoHideSplashScreen=false`) stays up meanwhile.
+- **Feedback.** `FeedbackService` (`core/feedback`) wraps Ionic toasts/alerts with Transloco keys:
+  `toast`, `toastError`, `toastWithUndo` (resolves `true` if "Deshacer" was tapped) and `confirm`.
 
 ## Visual language
 

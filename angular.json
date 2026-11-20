@@ -26,7 +26,7 @@
             "polyfills": [],
             "tsConfig": "tsconfig.app.json",
             "inlineStyleLanguage": "scss",
-            "allowedCommonJsDependencies": ["@messageformat/core"],
+            "allowedCommonJsDependencies": ["@messageformat/core", "localforage", "localforage-cordovasqlitedriver"],
             "assets": [
               {
                 "glob": "**/*",

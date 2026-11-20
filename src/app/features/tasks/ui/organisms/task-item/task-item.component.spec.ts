@@ -60,4 +60,61 @@ describe('TaskItemComponent', () => {
     expect(pill.textContent).toContain('Hecha');
     expect(fixture.nativeElement.querySelector('.title--done')).not.toBeNull();
   });
+
+  describe('tap targets', () => {
+    function setup() {
+      const fixture = TestBed.createComponent(TaskItemComponent);
+      fixture.componentRef.setInput('task', TASK);
+      fixture.detectChanges();
+      const counts = { edit: 0, menu: 0, toggle: 0 };
+      fixture.componentInstance.edit.subscribe(() => counts.edit++);
+      fixture.componentInstance.menuRequested.subscribe(() => counts.menu++);
+      fixture.componentInstance.toggleComplete.subscribe(() => counts.toggle++);
+      return { fixture, counts };
+    }
+
+    it('emits edit when the card body is tapped', () => {
+      // Arrange
+      const { fixture, counts } = setup();
+
+      // Act
+      fixture.nativeElement.querySelector('ion-item').click();
+
+      // Assert
+      expect(counts).toEqual({ edit: 1, menu: 0, toggle: 0 });
+    });
+
+    it('emits menuRequested, and not edit, when the ⋮ button is clicked', () => {
+      // Arrange
+      const { fixture, counts } = setup();
+
+      // Act
+      fixture.nativeElement.querySelector('ion-button.menu-button').click();
+
+      // Assert
+      expect(counts).toEqual({ edit: 0, menu: 1, toggle: 0 });
+    });
+
+    it('labels the ⋮ button with the task title', () => {
+      // Arrange
+      const { fixture } = setup();
+
+      // Assert
+      const button: HTMLElement = fixture.nativeElement.querySelector('ion-button.menu-button');
+      expect(button.getAttribute('aria-label')).toBe('Más opciones para Buy milk');
+    });
+
+    it('does not edit when the checkbox is tapped', () => {
+      // Arrange
+      const { fixture, counts } = setup();
+      const checkbox: HTMLElement = fixture.nativeElement.querySelector('ion-checkbox');
+
+      // Act
+      checkbox.click();
+      checkbox.dispatchEvent(new CustomEvent('ionChange', { detail: { checked: true } }));
+
+      // Assert
+      expect(counts).toEqual({ edit: 0, menu: 0, toggle: 1 });
+    });
+  });
 });

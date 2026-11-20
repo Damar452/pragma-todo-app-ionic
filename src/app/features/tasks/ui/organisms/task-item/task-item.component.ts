@@ -1,5 +1,13 @@
-import { ChangeDetectionStrategy, Component, computed, input, output } from '@angular/core';
 import {
+  ChangeDetectionStrategy,
+  Component,
+  computed,
+  input,
+  output,
+  viewChild,
+} from '@angular/core';
+import {
+  IonButton,
   IonCheckbox,
   IonIcon,
   IonItem,
@@ -9,7 +17,12 @@ import {
 } from '@ionic/angular';
 import { TranslocoPipe } from '@jsverse/transloco';
 import { addIcons } from 'ionicons';
-import { checkmarkDoneOutline, createOutline, trashOutline } from 'ionicons/icons';
+import {
+  checkmarkDoneOutline,
+  createOutline,
+  ellipsisVertical,
+  trashOutline,
+} from 'ionicons/icons';
 
 import type { Task } from '../../../domain/task.model';
 
@@ -29,6 +42,7 @@ import { ColorTagComponent } from '@shared/ui/molecules/color-tag/color-tag.comp
     IonItemOption,
     IonItem,
     IonCheckbox,
+    IonButton,
     IonIcon,
     ColorTagComponent,
     StatusPillComponent,
@@ -46,8 +60,38 @@ export class TaskItemComponent {
   readonly toggleComplete = output<void>();
   readonly edit = output<void>();
   readonly remove = output<void>();
+  /** The ⋮ button was tapped; the page decides what to offer. */
+  readonly menuRequested = output<void>();
+
+  private readonly sliding = viewChild(IonItemSliding);
 
   constructor() {
-    addIcons({ checkmarkDoneOutline, createOutline, trashOutline });
+    addIcons({ checkmarkDoneOutline, createOutline, ellipsisVertical, trashOutline });
+  }
+
+  protected onToggle(): void {
+    this.toggleComplete.emit();
+    this.closeOptions();
+  }
+
+  protected onEdit(): void {
+    this.edit.emit();
+    this.closeOptions();
+  }
+
+  /** Opens the menu without letting the tap reach the card (which would edit). */
+  protected onMenu(event: Event): void {
+    event.stopPropagation();
+    this.menuRequested.emit();
+  }
+
+  protected onRemove(): void {
+    this.remove.emit();
+    this.closeOptions();
+  }
+
+  /** Slides the row back to rest after one of its swipe actions ran. */
+  private closeOptions(): void {
+    void this.sliding()?.close();
   }
 }

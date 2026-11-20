@@ -33,6 +33,7 @@ export class CategoryListComponent {
 
   readonly edit = output<Category>();
   readonly remove = output<Category>();
+  readonly menuRequested = output<Category>();
 
   constructor() {
     addIcons({ pricetagsOutline });

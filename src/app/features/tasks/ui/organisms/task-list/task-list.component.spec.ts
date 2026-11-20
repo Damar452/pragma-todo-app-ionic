@@ -36,4 +36,20 @@ describe('TaskListComponent', () => {
     expect(fixture.nativeElement.querySelectorAll('app-task-item').length).toBe(2);
     expect(fixture.nativeElement.textContent).toContain('Work');
   });
+
+  it('forwards menuRequested with the task', () => {
+    // Arrange
+    const fixture = TestBed.createComponent(TaskListComponent);
+    fixture.componentRef.setInput('tasks', [TASKS[0]]);
+    fixture.componentRef.setInput('categories', []);
+    fixture.detectChanges();
+    const requested: unknown[] = [];
+    fixture.componentInstance.menuRequested.subscribe((value) => requested.push(value));
+
+    // Act
+    fixture.nativeElement.querySelector('ion-button.menu-button').click();
+
+    // Assert
+    expect(requested).toEqual([TASKS[0]]);
+  });
 });

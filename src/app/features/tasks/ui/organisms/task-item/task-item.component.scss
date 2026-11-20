@@ -18,6 +18,31 @@ ion-item {
   --min-height: 68px;
 }
 
+// Pressed state on tap: the item ripple stays inside the card's rounded corners.
+ion-item {
+  overflow: hidden;
+  border-radius: inherit;
+  --background-activated: var(--app-text);
+  --background-activated-opacity: 0.06;
+  --ripple-color: var(--app-text-muted);
+}
+
+// 40px tap target, muted; the ripple is clipped to the circle.
+.menu-button {
+  --color: var(--app-text-muted);
+  --padding-start: 0;
+  --padding-end: 0;
+  --border-radius: 50%;
+  --ripple-color: var(--app-text-muted);
+
+  flex: none;
+  width: 40px;
+  height: 40px;
+  margin: 0 -8px 0 4px;
+  overflow: hidden;
+  border-radius: 50%;
+}
+
 ion-item-options {
   border: 0;
 }

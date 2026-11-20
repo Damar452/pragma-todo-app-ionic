@@ -6,3 +6,11 @@ export const FORM_MODAL_BREAKPOINTS: number[] = [0, 1];
 export const FORM_MODAL_INITIAL_BREAKPOINT = 1;
 
 export const INITIAL_TASK_FILTER: TaskFilter = { kind: TaskFilterKind.All };
+
+/** Translation keys the page shows as feedback. */
+export const TASK_FEEDBACK_KEYS = {
+  created: 'tasks.feedback.created',
+  updated: 'tasks.feedback.updated',
+  deleted: 'tasks.feedback.deleted',
+  error: 'feedback.error',
+} as const;

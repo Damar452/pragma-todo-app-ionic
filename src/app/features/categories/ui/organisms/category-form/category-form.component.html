@@ -7,6 +7,9 @@
     formControlName="name"
     [counter]="true"
     [maxlength]="maxLength"
+    [errorText]="
+      form.controls.name.hasError(nameTakenError) ? ('categories.form.nameTaken' | transloco) : ''
+    "
   />
 
   <div class="color-section">
