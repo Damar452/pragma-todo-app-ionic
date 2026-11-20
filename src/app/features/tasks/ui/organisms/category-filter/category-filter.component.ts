@@ -3,14 +3,17 @@ import { translateSignal } from '@jsverse/transloco';
 
 import type { TaskFilter } from '../../../domain/task-filter.model';
 
-import type { Category } from '@features/categories/domain/category.model';
 import {
-  type ChipOption,
-  ChipSelectorComponent,
-} from '@shared/ui/molecules/chip-selector/chip-selector.component';
+  ALL_CHIP_ID,
+  ALL_LABEL_KEY,
+  UNCATEGORIZED_CHIP_ID,
+  UNCATEGORIZED_LABEL_KEY,
+} from './category-filter.constants';
+import { toChipId, toTaskFilter } from './category-filter.mappers';
 
-const ALL_ID = '__all__';
-const UNCATEGORIZED_ID = '__none__';
+import type { Category } from '@features/categories/domain/category.model';
+import { ChipSelectorComponent } from '@shared/ui/molecules/chip-selector/chip-selector.component';
+import type { ChipOption } from '@shared/ui/molecules/chip-selector/chip-selector.models';
 
 @Component({
   selector: 'app-category-filter',
@@ -24,34 +27,18 @@ export class CategoryFilterComponent {
 
   readonly filterChange = output<TaskFilter>();
 
-  private readonly allLabel = translateSignal('tasks.filter.all');
-  private readonly uncategorizedLabel = translateSignal('tasks.filter.uncategorized');
+  private readonly allLabel = translateSignal(ALL_LABEL_KEY);
+  private readonly uncategorizedLabel = translateSignal(UNCATEGORIZED_LABEL_KEY);
 
   protected readonly options = computed<readonly ChipOption[]>(() => [
-    { id: ALL_ID, label: this.allLabel() },
+    { id: ALL_CHIP_ID, label: this.allLabel() },
     ...this.categories().map((c) => ({ id: c.id, label: c.name, color: c.color })),
-    { id: UNCATEGORIZED_ID, label: this.uncategorizedLabel() },
+    { id: UNCATEGORIZED_CHIP_ID, label: this.uncategorizedLabel() },
   ]);
 
-  protected readonly selectedId = computed(() => {
-    const filter = this.filter();
-    switch (filter.kind) {
-      case 'all':
-        return ALL_ID;
-      case 'uncategorized':
-        return UNCATEGORIZED_ID;
-      case 'category':
-        return filter.categoryId;
-    }
-  });
+  protected readonly selectedId = computed(() => toChipId(this.filter()));
 
   protected onSelect(id: string): void {
-    if (id === ALL_ID) {
-      this.filterChange.emit({ kind: 'all' });
-    } else if (id === UNCATEGORIZED_ID) {
-      this.filterChange.emit({ kind: 'uncategorized' });
-    } else {
-      this.filterChange.emit({ kind: 'category', categoryId: id });
-    }
+    this.filterChange.emit(toTaskFilter(id));
   }
 }

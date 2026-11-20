@@ -13,10 +13,8 @@ import { TranslocoService, provideTransloco } from '@jsverse/transloco';
 import { provideTranslocoMessageformat } from '@jsverse/transloco-messageformat';
 import { firstValueFrom } from 'rxjs';
 
+import { AVAILABLE_LANGS, DEFAULT_LANG } from './i18n.constants';
 import { TranslocoHttpLoader } from './transloco-http.loader';
-
-export const DEFAULT_LANG = 'es';
-export const AVAILABLE_LANGS = [DEFAULT_LANG];
 
 /**
  * Registers Transloco (ICU plurals through messageformat), the Angular locale

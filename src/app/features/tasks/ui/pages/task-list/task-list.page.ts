@@ -11,6 +11,8 @@ import { TranslocoPipe } from '@jsverse/transloco';
 import { addIcons } from 'ionicons';
 import { add } from 'ionicons/icons';
 
+import { countCompletedTasks } from '../../../domain/count-completed-tasks';
+import { filterTasks } from '../../../domain/filter-tasks';
 import type { TaskDraft } from '../../../domain/task-draft.model';
 import type { TaskFilter } from '../../../domain/task-filter.model';
 import type { Task } from '../../../domain/task.model';
@@ -19,18 +21,18 @@ import { CategoryFilterComponent } from '../../organisms/category-filter/categor
 import { TaskFormComponent } from '../../organisms/task-form/task-form.component';
 import { TaskListComponent } from '../../organisms/task-list/task-list.component';
 
+import {
+  FORM_MODAL_BREAKPOINTS,
+  FORM_MODAL_INITIAL_BREAKPOINT,
+  INITIAL_TASK_FILTER,
+} from './task-list.page.constants';
+
+import { FEATURE_FLAG_DEFAULTS } from '@core/feature-flags/feature-flags';
 import { CategoriesStore } from '@features/categories/state/categories.store';
 import { ProgressSummaryComponent } from '@shared/ui/molecules/progress-summary/progress-summary.component';
 import { ListPageTemplateComponent } from '@shared/ui/templates/list-page-template/list-page-template.component';
-
-function formatToday(locale: string): string {
-  const label = new Intl.DateTimeFormat(locale, {
-    weekday: 'long',
-    day: 'numeric',
-    month: 'long',
-  }).format(new Date());
-  return label.charAt(0).toLocaleUpperCase(locale) + label.slice(1);
-}
+import { formatLongDate } from '@shared/utils/date/format-long-date';
+import { capitalize } from '@shared/utils/string/capitalize';
 
 @Component({
   selector: 'app-task-list-page',
@@ -55,35 +57,27 @@ function formatToday(locale: string): string {
 export class TaskListPage {
   private readonly tasksStore = inject(TasksStore);
   private readonly categoriesStore = inject(CategoriesStore);
+  private readonly locale = inject(LOCALE_ID);
 
   protected readonly tasks = this.tasksStore.tasks;
   protected readonly categories = this.categoriesStore.categories;
 
   /** Will be wired to the `categories_enabled` feature flag. */
-  protected readonly categoriesEnabled = signal(true);
+  protected readonly categoriesEnabled = signal(FEATURE_FLAG_DEFAULTS.categories_enabled);
 
   /** Subtitle under the page title in the app locale, e.g. "Viernes, 20 de noviembre". */
-  protected readonly todayLabel = formatToday(inject(LOCALE_ID));
+  protected readonly todayLabel = capitalize(formatLongDate(new Date(), this.locale), this.locale);
 
-  protected readonly filter = signal<TaskFilter>({ kind: 'all' });
+  protected readonly modalBreakpoints = FORM_MODAL_BREAKPOINTS;
+  protected readonly modalInitialBreakpoint = FORM_MODAL_INITIAL_BREAKPOINT;
+
+  protected readonly filter = signal<TaskFilter>(INITIAL_TASK_FILTER);
   protected readonly isFormOpen = signal(false);
   protected readonly editingTask = signal<Task | null>(null);
 
-  protected readonly completedCount = computed(
-    () => this.tasks().filter((task) => task.completed).length,
-  );
+  protected readonly completedCount = computed(() => countCompletedTasks(this.tasks()));
 
-  protected readonly visibleTasks = computed(() => {
-    const filter = this.filter();
-    switch (filter.kind) {
-      case 'all':
-        return this.tasks();
-      case 'uncategorized':
-        return this.tasks().filter((task) => task.categoryId === null);
-      case 'category':
-        return this.tasks().filter((task) => task.categoryId === filter.categoryId);
-    }
-  });
+  protected readonly visibleTasks = computed(() => filterTasks(this.tasks(), this.filter()));
 
   constructor() {
     addIcons({ add });

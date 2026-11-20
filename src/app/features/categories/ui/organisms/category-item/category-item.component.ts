@@ -4,13 +4,20 @@ import { TranslocoPipe, translateSignal } from '@jsverse/transloco';
 import { addIcons } from 'ionicons';
 import { createOutline, pricetag, trashOutline } from 'ionicons/icons';
 
+import { EMPTY_CATEGORY_TASK_STATS } from '../../../domain/category-task-stats.constants';
 import type { CategoryTaskStats } from '../../../domain/category-task-stats.model';
 import type { Category } from '../../../domain/category.model';
 
+import {
+  CATEGORY_RING_SIZE,
+  CATEGORY_RING_STROKE_WIDTH,
+  PROGRESS_LABEL_KEY,
+  TASK_COUNT_KEY,
+} from './category-item.constants';
+
 import { IconBadgeComponent } from '@shared/ui/atoms/icon-badge/icon-badge.component';
 import { ProgressRingComponent } from '@shared/ui/atoms/progress-ring/progress-ring.component';
-
-const EMPTY_STATS: CategoryTaskStats = { total: 0, completed: 0 };
+import { toRatio } from '@shared/utils/number/to-ratio';
 
 @Component({
   selector: 'app-category-item',
@@ -30,24 +37,27 @@ const EMPTY_STATS: CategoryTaskStats = { total: 0, completed: 0 };
 })
 export class CategoryItemComponent {
   readonly category = input.required<Category>();
-  readonly stats = input<CategoryTaskStats>(EMPTY_STATS);
+  readonly stats = input<CategoryTaskStats>(EMPTY_CATEGORY_TASK_STATS);
 
   readonly edit = output<void>();
   readonly remove = output<void>();
 
+  protected readonly ringSize = CATEGORY_RING_SIZE;
+  protected readonly ringStrokeWidth = CATEGORY_RING_STROKE_WIDTH;
+
   protected readonly countLabel = translateSignal(
-    'categories.taskCount',
+    TASK_COUNT_KEY,
     computed(() => ({ count: this.stats().total })),
   );
 
   protected readonly progressLabel = translateSignal(
-    'categories.progressLabel',
+    PROGRESS_LABEL_KEY,
     computed(() => ({ name: this.category().name })),
   );
 
   protected readonly ratio = computed(() => {
     const { total, completed } = this.stats();
-    return total > 0 ? completed / total : 0;
+    return toRatio(completed, total);
   });
 
   constructor() {

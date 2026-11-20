@@ -27,7 +27,7 @@
     <app-status-pill
       slot="end"
       [label]="(task().completed ? 'tasks.status.done' : 'tasks.status.todo') | transloco"
-      [tone]="task().completed ? 'success' : 'primary'"
+      [tone]="tone()"
     />
   </ion-item>
 

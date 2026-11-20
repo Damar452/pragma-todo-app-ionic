@@ -3,11 +3,7 @@ import { IonChip } from '@ionic/angular';
 
 import { ColorDotComponent } from '../../atoms/color-dot/color-dot.component';
 
-export interface ChipOption {
-  readonly id: string;
-  readonly label: string;
-  readonly color?: string;
-}
+import type { ChipOption } from './chip-selector.models';
 
 @Component({
   selector: 'app-chip-selector',

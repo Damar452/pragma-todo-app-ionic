@@ -1,5 +1,7 @@
 import { ChangeDetectionStrategy, Component, input } from '@angular/core';
 
+import { ColorDotSize } from './color-dot.enums';
+
 @Component({
   selector: 'app-color-dot',
   templateUrl: 'color-dot.component.html',
@@ -8,5 +10,5 @@ import { ChangeDetectionStrategy, Component, input } from '@angular/core';
 })
 export class ColorDotComponent {
   readonly color = input.required<string>();
-  readonly size = input<'sm' | 'md' | 'lg'>('md');
+  readonly size = input<ColorDotSize>(ColorDotSize.Md);
 }

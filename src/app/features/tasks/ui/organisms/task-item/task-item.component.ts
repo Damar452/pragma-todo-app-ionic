@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, input, output } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, input, output } from '@angular/core';
 import {
   IonCheckbox,
   IonIcon,
@@ -15,6 +15,7 @@ import type { Task } from '../../../domain/task.model';
 
 import type { Category } from '@features/categories/domain/category.model';
 import { StatusPillComponent } from '@shared/ui/atoms/status-pill/status-pill.component';
+import { StatusPillTone } from '@shared/ui/atoms/status-pill/status-pill.enums';
 import { ColorTagComponent } from '@shared/ui/molecules/color-tag/color-tag.component';
 
 @Component({
@@ -37,6 +38,10 @@ import { ColorTagComponent } from '@shared/ui/molecules/color-tag/color-tag.comp
 export class TaskItemComponent {
   readonly task = input.required<Task>();
   readonly category = input<Category | null>(null);
+
+  protected readonly tone = computed(() =>
+    this.task().completed ? StatusPillTone.Success : StatusPillTone.Primary,
+  );
 
   readonly toggleComplete = output<void>();
   readonly edit = output<void>();

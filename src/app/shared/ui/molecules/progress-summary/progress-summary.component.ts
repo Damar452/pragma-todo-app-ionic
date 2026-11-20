@@ -2,6 +2,22 @@ import { ChangeDetectionStrategy, Component, computed, input } from '@angular/co
 import { translateSignal } from '@jsverse/transloco';
 
 import { ProgressRingComponent } from '../../atoms/progress-ring/progress-ring.component';
+import {
+  PROGRESS_MAX_RATIO,
+  PROGRESS_MIN_RATIO,
+} from '../../atoms/progress-ring/progress-ring.constants';
+
+import {
+  SUBTITLE_KEYS,
+  SUMMARY_RING_COLOR,
+  SUMMARY_RING_SIZE,
+  SUMMARY_RING_STROKE_WIDTH,
+  SUMMARY_RING_TRACK_COLOR,
+} from './progress-summary.constants';
+import { resolveHeadlineKey } from './progress-summary.headline';
+
+import { clamp } from '@shared/utils/number/clamp';
+import { toRatio } from '@shared/utils/number/to-ratio';
 
 @Component({
   selector: 'app-progress-summary',
@@ -14,26 +30,21 @@ export class ProgressSummaryComponent {
   readonly completed = input.required<number>();
   readonly total = input.required<number>();
 
+  protected readonly ringSize = SUMMARY_RING_SIZE;
+  protected readonly ringStrokeWidth = SUMMARY_RING_STROKE_WIDTH;
+  protected readonly ringColor = SUMMARY_RING_COLOR;
+  protected readonly ringTrackColor = SUMMARY_RING_TRACK_COLOR;
+
   protected readonly ratio = computed(() =>
-    this.total() > 0 ? Math.min(this.completed() / this.total(), 1) : 0,
+    clamp(toRatio(this.completed(), this.total()), PROGRESS_MIN_RATIO, PROGRESS_MAX_RATIO),
   );
 
-  private readonly headlineKey = computed(() => {
-    const ratio = this.ratio();
-    if (this.total() === 0) {
-      return 'shared.progress.headline.plan';
-    }
-    if (ratio === 0) {
-      return 'shared.progress.headline.start';
-    }
-    if (ratio < 0.5) {
-      return 'shared.progress.headline.keepGoing';
-    }
-    return ratio < 1 ? 'shared.progress.headline.almostDone' : 'shared.progress.headline.allDone';
-  });
+  private readonly headlineKey = computed(() =>
+    resolveHeadlineKey({ total: this.total(), ratio: this.ratio() }),
+  );
 
   private readonly subtitleKey = computed(() =>
-    this.total() > 0 ? 'shared.progress.completedOf' : 'shared.progress.addFirst',
+    this.total() > 0 ? SUBTITLE_KEYS.CompletedOf : SUBTITLE_KEYS.AddFirst,
   );
 
   private readonly subtitleParams = computed(() => ({

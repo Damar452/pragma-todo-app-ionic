@@ -1,6 +1,18 @@
 import { ChangeDetectionStrategy, Component, computed, input } from '@angular/core';
 
-const LABEL_FONT_RATIO = 0.26;
+import {
+  FULL_TURN_RADIANS,
+  LABEL_FONT_RATIO,
+  PROGRESS_MAX_RATIO,
+  PROGRESS_MIN_RATIO,
+  PROGRESS_RING_DEFAULT_COLOR,
+  PROGRESS_RING_DEFAULT_SIZE,
+  PROGRESS_RING_DEFAULT_STROKE_WIDTH,
+  PROGRESS_RING_DEFAULT_TRACK_COLOR,
+} from './progress-ring.constants';
+
+import { clamp } from '@shared/utils/number/clamp';
+import { toPercent } from '@shared/utils/number/to-percent';
 
 /** Circular progress indicator. `value` is a ratio from 0 to 1 (values outside are clamped). */
 @Component({
@@ -19,20 +31,24 @@ const LABEL_FONT_RATIO = 0.26;
   },
 })
 export class ProgressRingComponent {
-  readonly value = input(0);
-  readonly size = input(48);
-  readonly strokeWidth = input(5);
-  readonly color = input('var(--ion-color-primary)');
-  readonly trackColor = input('rgba(128, 128, 128, 0.2)');
+  readonly value = input(PROGRESS_MIN_RATIO);
+  readonly size = input(PROGRESS_RING_DEFAULT_SIZE);
+  readonly strokeWidth = input(PROGRESS_RING_DEFAULT_STROKE_WIDTH);
+  readonly color = input(PROGRESS_RING_DEFAULT_COLOR);
+  readonly trackColor = input(PROGRESS_RING_DEFAULT_TRACK_COLOR);
   readonly showLabel = input(true);
   /** Accessible name announced with the progress value. */
   readonly label = input.required<string>();
 
-  protected readonly clamped = computed(() => Math.min(Math.max(this.value(), 0), 1));
-  protected readonly percent = computed(() => Math.round(this.clamped() * 100));
-  protected readonly radius = computed(() => (this.size() - this.strokeWidth()) / 2);
-  protected readonly circumference = computed(() => 2 * Math.PI * this.radius());
-  protected readonly dashOffset = computed(() => this.circumference() * (1 - this.clamped()));
+  protected readonly clamped = computed(() =>
+    clamp(this.value(), PROGRESS_MIN_RATIO, PROGRESS_MAX_RATIO),
+  );
+  protected readonly percent = computed(() => toPercent(this.clamped()));
   protected readonly center = computed(() => this.size() / 2);
+  protected readonly radius = computed(() => (this.size() - this.strokeWidth()) / 2);
+  protected readonly circumference = computed(() => FULL_TURN_RADIANS * this.radius());
+  protected readonly dashOffset = computed(
+    () => this.circumference() * (PROGRESS_MAX_RATIO - this.clamped()),
+  );
   protected readonly fontSize = computed(() => Math.round(this.size() * LABEL_FONT_RATIO));
 }

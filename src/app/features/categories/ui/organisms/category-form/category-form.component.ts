@@ -8,10 +8,10 @@ import type { CategoryDraft } from '../../../domain/category-draft.model';
 import { DEFAULT_CATEGORY_COLOR } from '../../../domain/category-palette';
 import type { Category } from '../../../domain/category.model';
 
+import { CATEGORY_FORM_EMPTY_NAME, CATEGORY_NAME_MAX_LENGTH } from './category-form.constants';
+
 import { ColorPickerComponent } from '@shared/ui/molecules/color-picker/color-picker.component';
 import { notBlank } from '@shared/utils/not-blank.validator';
-
-export const CATEGORY_NAME_MAX_LENGTH = 30;
 
 @Component({
   selector: 'app-category-form',
@@ -33,7 +33,10 @@ export class CategoryFormComponent {
   protected readonly maxLength = CATEGORY_NAME_MAX_LENGTH;
 
   protected readonly form = this.fb.group({
-    name: this.fb.control('', [notBlank, Validators.maxLength(CATEGORY_NAME_MAX_LENGTH)]),
+    name: this.fb.control(CATEGORY_FORM_EMPTY_NAME, [
+      notBlank,
+      Validators.maxLength(CATEGORY_NAME_MAX_LENGTH),
+    ]),
     color: this.fb.control(DEFAULT_CATEGORY_COLOR),
   });
 
@@ -45,7 +48,7 @@ export class CategoryFormComponent {
     effect(() => {
       const category = this.category();
       this.form.reset({
-        name: category?.name ?? '',
+        name: category?.name ?? CATEGORY_FORM_EMPTY_NAME,
         color: category?.color ?? this.colors()[0] ?? DEFAULT_CATEGORY_COLOR,
       });
     });

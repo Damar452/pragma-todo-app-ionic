@@ -6,11 +6,16 @@ import { add } from 'ionicons/icons';
 
 import type { CategoryDraft } from '../../../domain/category-draft.model';
 import { CATEGORY_COLORS } from '../../../domain/category-palette';
-import type { CategoryTaskStats } from '../../../domain/category-task-stats.model';
 import type { Category } from '../../../domain/category.model';
+import { countTasksByCategory } from '../../../domain/count-tasks-by-category';
 import { CategoriesStore } from '../../../state/categories.store';
 import { CategoryFormComponent } from '../../organisms/category-form/category-form.component';
 import { CategoryListComponent } from '../../organisms/category-list/category-list.component';
+
+import {
+  FORM_MODAL_BREAKPOINTS,
+  FORM_MODAL_INITIAL_BREAKPOINT,
+} from './category-manager.page.constants';
 
 import { TasksStore } from '@features/tasks/state/tasks.store';
 import { ListPageTemplateComponent } from '@shared/ui/templates/list-page-template/list-page-template.component';
@@ -38,23 +43,15 @@ export class CategoryManagerPage {
 
   protected readonly categories = this.categoriesStore.categories;
   protected readonly colors = CATEGORY_COLORS;
+  protected readonly modalBreakpoints = FORM_MODAL_BREAKPOINTS;
+  protected readonly modalInitialBreakpoint = FORM_MODAL_INITIAL_BREAKPOINT;
 
   protected readonly isFormOpen = signal(false);
   protected readonly editingCategory = signal<Category | null>(null);
 
-  protected readonly statsByCategory = computed(() => {
-    const stats = new Map<string, CategoryTaskStats>();
-    for (const task of this.tasksStore.tasks()) {
-      if (task.categoryId !== null) {
-        const current = stats.get(task.categoryId) ?? { total: 0, completed: 0 };
-        stats.set(task.categoryId, {
-          total: current.total + 1,
-          completed: current.completed + (task.completed ? 1 : 0),
-        });
-      }
-    }
-    return stats;
-  });
+  protected readonly statsByCategory = computed(() =>
+    countTasksByCategory(this.tasksStore.tasks()),
+  );
 
   constructor() {
     addIcons({ add });

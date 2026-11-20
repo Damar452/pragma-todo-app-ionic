@@ -4,6 +4,7 @@ import { TranslocoPipe } from '@jsverse/transloco';
 import { addIcons } from 'ionicons';
 import { pricetagsOutline } from 'ionicons/icons';
 
+import { EMPTY_CATEGORY_TASK_STATS } from '../../../domain/category-task-stats.constants';
 import type { CategoryTaskStats } from '../../../domain/category-task-stats.model';
 import type { Category } from '../../../domain/category.model';
 import { CategoryItemComponent } from '../category-item/category-item.component';
@@ -27,6 +28,8 @@ import { SectionHeaderComponent } from '@shared/ui/molecules/section-header/sect
 export class CategoryListComponent {
   readonly categories = input.required<readonly Category[]>();
   readonly statsByCategory = input<ReadonlyMap<string, CategoryTaskStats>>(new Map());
+
+  protected readonly emptyStats = EMPTY_CATEGORY_TASK_STATS;
 
   readonly edit = output<Category>();
   readonly remove = output<Category>();

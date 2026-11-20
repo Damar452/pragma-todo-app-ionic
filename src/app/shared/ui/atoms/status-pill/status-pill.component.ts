@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component, input } from '@angular/core';
 
-export type StatusTone = 'success' | 'primary' | 'neutral';
+import { StatusPillTone } from './status-pill.enums';
 
 @Component({
   selector: 'app-status-pill',
@@ -11,5 +11,5 @@ export type StatusTone = 'success' | 'primary' | 'neutral';
 })
 export class StatusPillComponent {
   readonly label = input.required<string>();
-  readonly tone = input<StatusTone>('neutral');
+  readonly tone = input<StatusPillTone>(StatusPillTone.Neutral);
 }

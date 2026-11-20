@@ -6,10 +6,10 @@ import { TranslocoPipe } from '@jsverse/transloco';
 import type { TaskDraft } from '../../../domain/task-draft.model';
 import type { Task } from '../../../domain/task.model';
 
+import { TASK_FORM_EMPTY_TITLE, TASK_TITLE_MAX_LENGTH } from './task-form.constants';
+
 import type { Category } from '@features/categories/domain/category.model';
 import { notBlank } from '@shared/utils/not-blank.validator';
-
-export const TASK_TITLE_MAX_LENGTH = 120;
 
 @Component({
   selector: 'app-task-form',
@@ -32,14 +32,20 @@ export class TaskFormComponent {
   protected readonly maxLength = TASK_TITLE_MAX_LENGTH;
 
   protected readonly form = this.fb.group({
-    title: this.fb.control('', [notBlank, Validators.maxLength(TASK_TITLE_MAX_LENGTH)]),
+    title: this.fb.control(TASK_FORM_EMPTY_TITLE, [
+      notBlank,
+      Validators.maxLength(TASK_TITLE_MAX_LENGTH),
+    ]),
     categoryId: this.fb.control<string | null>(null),
   });
 
   constructor() {
     effect(() => {
       const task = this.task();
-      this.form.reset({ title: task?.title ?? '', categoryId: task?.categoryId ?? null });
+      this.form.reset({
+        title: task?.title ?? TASK_FORM_EMPTY_TITLE,
+        categoryId: task?.categoryId ?? null,
+      });
     });
   }
 

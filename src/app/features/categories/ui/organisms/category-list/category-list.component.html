@@ -7,7 +7,7 @@
     @for (category of categories(); track category.id) {
       <app-category-item
         [category]="category"
-        [stats]="statsByCategory().get(category.id) ?? { total: 0, completed: 0 }"
+        [stats]="statsByCategory().get(category.id) ?? emptyStats"
         (edit)="edit.emit(category)"
         (remove)="remove.emit(category)"
       />

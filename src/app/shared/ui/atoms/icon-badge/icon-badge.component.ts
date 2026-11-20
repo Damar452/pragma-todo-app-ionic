@@ -1,6 +1,8 @@
 import { ChangeDetectionStrategy, Component, input } from '@angular/core';
 import { IonIcon } from '@ionic/angular';
 
+import { IconBadgeSize } from './icon-badge.enums';
+
 /** The icon must be registered with `addIcons` by whoever uses this component. */
 @Component({
   selector: 'app-icon-badge',
@@ -17,5 +19,5 @@ export class IconBadgeComponent {
   readonly icon = input.required<string>();
   /** Hex color: used for the icon and, at low opacity, for the background. */
   readonly color = input.required<string>();
-  readonly size = input<'sm' | 'md'>('md');
+  readonly size = input<IconBadgeSize>(IconBadgeSize.Md);
 }

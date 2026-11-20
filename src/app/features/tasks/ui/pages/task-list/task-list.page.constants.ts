@@ -1,0 +1,8 @@
+import { TaskFilterKind } from '../../../domain/task-filter.enums';
+import type { TaskFilter } from '../../../domain/task-filter.model';
+
+/** Sheet modal that fits its content (see "Sheet modals" in docs/ARCHITECTURE.md). */
+export const FORM_MODAL_BREAKPOINTS: number[] = [0, 1];
+export const FORM_MODAL_INITIAL_BREAKPOINT = 1;
+
+export const INITIAL_TASK_FILTER: TaskFilter = { kind: TaskFilterKind.All };
