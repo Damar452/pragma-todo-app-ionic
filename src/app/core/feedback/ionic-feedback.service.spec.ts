@@ -2,7 +2,7 @@ import { TestBed } from '@angular/core/testing';
 import { ActionSheetController, AlertController, ToastController } from '@ionic/angular';
 
 import { FeedbackRole, ItemAction } from './feedback.enums';
-import { FeedbackService } from './feedback.service';
+import { IonicFeedbackService } from './ionic-feedback.service';
 
 interface FakeOverlay {
   options: Record<string, unknown>;
@@ -45,12 +45,13 @@ function setup() {
   const sheets = new FakeOverlayController();
   TestBed.configureTestingModule({
     providers: [
+      IonicFeedbackService,
       { provide: ToastController, useValue: toasts },
       { provide: AlertController, useValue: alerts },
       { provide: ActionSheetController, useValue: sheets },
     ],
   });
-  return { toasts, alerts, sheets, service: TestBed.inject(FeedbackService) };
+  return { toasts, alerts, sheets, service: TestBed.inject(IonicFeedbackService) };
 }
 
 describe('FeedbackService', () => {

@@ -53,9 +53,9 @@ const POLICIES = [
     allow: [to('core', 'shared-util'), toSameFeature('domain', 'data')],
   },
   {
-    // A store may coordinate with another feature's store (e.g. deleting a category).
+    // A store only talks to its own feature; cross-feature needs go through a contract bound at the app root.
     from: { element: { type: 'state' } },
-    allow: [to('core', 'shared-util', 'state'), toSameFeature('domain', 'data')],
+    allow: [to('core', 'shared-util'), toSameFeature('domain', 'data', 'state')],
   },
   {
     // Organisms are presentational: they render domain models but never inject state.

@@ -11,6 +11,7 @@ import {
 } from '@core/feedback/testing/fake-feedback.service';
 import { aCategory } from '@features/categories/domain/category-fixture.testing';
 import { CategoriesStore } from '@features/categories/state/categories.store';
+import { CategoryTaskCleanup } from '@features/categories/state/category-task-cleanup';
 import { provideInMemoryCategories } from '@features/categories/state/testing/in-memory-categories.providers';
 import { TaskFilterKind } from '@features/tasks/domain/task-filter.enums';
 import { aTask } from '@features/tasks/domain/task-fixture.testing';
@@ -27,6 +28,7 @@ async function setup(tasks = [aTask({ id: 'a', title: 'Buy milk' })]) {
     providers: [
       ...taskProviders,
       ...categoryProviders,
+      { provide: CategoryTaskCleanup, useExisting: TasksStore },
       provideFakeFeedback(),
       ...provideFakeDate(),
     ],

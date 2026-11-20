@@ -1,15 +1,19 @@
 import { TestBed } from '@angular/core/testing';
 
 import { initializeAppData } from './app.initializer';
+import { provideCategoryTaskCleanup } from './provide-category-task-cleanup';
 
+import { provideDate } from '@core/date/provide-date';
 import { LoadStatus } from '@core/state/load-status.enums';
 import { KeyValueStorage } from '@core/storage/key-value-storage';
 import { SCHEMA_VERSION_KEY } from '@core/storage/storage.constants';
 import { InMemoryKeyValueStorage } from '@core/storage/testing/in-memory-key-value-storage';
 import { provideCategoriesData } from '@features/categories/data/provide-categories-data';
 import { CategoriesStore } from '@features/categories/state/categories.store';
+import { provideCategoriesState } from '@features/categories/state/provide-categories-state';
 import { provideTasksData } from '@features/tasks/data/provide-tasks-data';
 import { TASKS_STORAGE_KEY } from '@features/tasks/data/task-storage.constants';
+import { provideTasksState } from '@features/tasks/state/provide-tasks-state';
 import { TasksStore } from '@features/tasks/state/tasks.store';
 
 function setup() {
@@ -19,6 +23,10 @@ function setup() {
       { provide: KeyValueStorage, useValue: storage },
       provideTasksData(),
       provideCategoriesData(),
+      provideDate(),
+      provideTasksState(),
+      provideCategoriesState(),
+      provideCategoryTaskCleanup(),
     ],
   });
   return { storage };

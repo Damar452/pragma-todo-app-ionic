@@ -1,14 +1,16 @@
 import { LOCALE_ID } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 
-import { DateService } from './date.service';
+import { IntlDateService } from './intl-date.service';
 
 function setup(locale = 'es') {
-  TestBed.configureTestingModule({ providers: [{ provide: LOCALE_ID, useValue: locale }] });
-  return TestBed.inject(DateService);
+  TestBed.configureTestingModule({
+    providers: [IntlDateService, { provide: LOCALE_ID, useValue: locale }],
+  });
+  return TestBed.inject(IntlDateService);
 }
 
-describe('DateService', () => {
+describe('IntlDateService', () => {
   it('formats a long date capitalized in the app locale', () => {
     // Arrange
     const service = setup('es');

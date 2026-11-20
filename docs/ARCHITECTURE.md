@@ -32,18 +32,18 @@ Folders are created when the first file needs them; empty layers are not kept ar
 
 ## Layer rules
 
-| From        | May import                                                          |
-| ----------- | ------------------------------------------------------------------- |
-| `core`      | core, shared/utils                                                  |
-| `layout`    | core, atoms, molecules, templates, shared/utils                     |
-| `atoms`     | atoms, shared/utils                                                 |
-| `molecules` | atoms, molecules, shared/utils                                      |
-| `templates` | atoms, molecules, templates, shared/utils                           |
-| `domain`    | its own feature's domain, shared/utils                              |
-| `data`      | its own feature's domain and data, core, shared/utils               |
-| `state`     | its own feature's domain and data, any feature's state, core, utils |
-| `organisms` | any feature's domain, atoms, molecules, own organisms, utils        |
-| `pages`     | everything above except other features' organisms                   |
+| From        | May import                                                   |
+| ----------- | ------------------------------------------------------------ |
+| `core`      | core, shared/utils                                           |
+| `layout`    | core, atoms, molecules, templates, shared/utils              |
+| `atoms`     | atoms, shared/utils                                          |
+| `molecules` | atoms, molecules, shared/utils                               |
+| `templates` | atoms, molecules, templates, shared/utils                    |
+| `domain`    | its own feature's domain, shared/utils                       |
+| `data`      | its own feature's domain and data, core, shared/utils        |
+| `state`     | its own feature's domain, data and state, core, utils        |
+| `organisms` | any feature's domain, atoms, molecules, own organisms, utils |
+| `pages`     | everything above except other features' organisms            |
 
 Key ideas behind them:
 
@@ -113,7 +113,7 @@ same-folder imports (`./x`) stay relative: they are the file's immediate neighbo
   the next list, the signal is updated (optimistic), the repository persists it, and on failure
   the previous list is restored and the error rethrown (pages show an error toast).
   `TasksStore.remove()` returns a `{ task, index }` snapshot for `restore()` (undo);
-  `CategoriesStore.remove()` also calls `TasksStore.unassignCategory()`. Ids come from the
+  `CategoriesStore.remove()` also calls `CategoryTaskCleanup.unassignCategory()` (see below). Ids come from the
   `ID_GENERATOR` token (`core/runtime`) and time from `DateService`, so specs are deterministic.
 - **App initializer.** `app.config.ts` is the composition root (providers moved out of `main.ts`).
   `provideAppInitializer(initializeAppData)` runs migrations, then
@@ -123,8 +123,36 @@ same-folder imports (`./x`) stay relative: they are the file's immediate neighbo
   `today()` and `formatLongDate(date)` (capitalized, in the app `LOCALE_ID`). It delegates to the pure
   helpers in `shared/utils`. Stores and pages never call `Date.now()` / `new Date()` / `Intl` directly;
   specs use `provideFakeDate(now?)` (`core/date/testing/`).
-- **Feedback.** `FeedbackService` (`core/feedback`) wraps Ionic toasts/alerts with Transloco keys:
+- **Feedback.** `FeedbackService` (`core/feedback`, implemented by `IonicFeedbackService`) wraps Ionic toasts/alerts with Transloco keys:
   `toast`, `toastError`, `toastWithUndo` (resolves `true` if "Deshacer" was tapped) and `confirm`.
+
+## Contracts & dependency inversion
+
+Stores and services are **abstract classes** that double as the contract and the DI token.
+Consumers inject the contract; implementations are bound in `provide*()` functions.
+
+- **Naming.** The contract keeps the domain name (`TasksStore`, `CategoriesStore`,
+  `FeedbackService`, `DateService`) so consumers never change. The implementation says how it
+  works: `Signal*` (`SignalTasksStore`, `SignalCategoriesStore`), `Ionic*` (`IonicFeedbackService`),
+  `Intl*` (`IntlDateService`). Same idea as `TaskRepository` / `TaskLocalRepository`.
+- **Bindings** live in `provideTasksState()`, `provideCategoriesState()`, `provideFeedback()`,
+  `provideDate()` (plus the data and storage ones), all registered in `app.config.ts`.
+  Implementations are plain `@Injectable()` (no `providedIn: 'root'`): nothing resolves unless
+  it is bound. Stores use `useExisting` so one instance answers to both the contract and the
+  concrete class; services with no concrete-class consumers use `useClass`.
+- **Narrow cross-feature contracts (ISP).** The categories state needs one thing from tasks:
+  drop a deleted category. It declares `CategoryTaskCleanup` (`unassignCategory`) in its own
+  folder and `SignalCategoriesStore` injects that, so `categories/state` imports nothing from
+  the tasks feature. The app root wires it in `provideCategoryTaskCleanup()`, whose factory
+  return type is annotated `CategoryTaskCleanup`: if `TasksStore` drifts, the build fails there.
+- **Tests.** Store specs still use the real store with in-memory repositories
+  (`provideInMemoryTasks()` / `provideInMemoryCategories()` also bind the state contracts).
+  `FakeFeedbackService` and `FakeDateService` extend the contracts (`provideFakeFeedback()`,
+  `provideFakeDate()`); `FakeCategoryTaskCleanup` isolates the categories store spec. Page specs
+  that need the real wiring provide `{ provide: CategoryTaskCleanup, useExisting: TasksStore }`.
+
+Remaining `providedIn: 'root'`: `ID_GENERATOR` (a default-valued token) and `TranslocoHttpLoader`
+(third-party loader class, no contract needed).
 
 ## Visual language
 

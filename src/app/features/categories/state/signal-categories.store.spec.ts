@@ -1,14 +1,15 @@
 import { TestBed } from '@angular/core/testing';
 
 import { CategoriesStore } from './categories.store';
+import { CategoryTaskCleanup } from './category-task-cleanup';
+import { provideCategoriesState } from './provide-categories-state';
 
 import { ID_GENERATOR } from '@core/runtime/id-generator';
 import { LoadStatus } from '@core/state/load-status.enums';
 import { CategoryRepository } from '@features/categories/data/category.repository';
 import { InMemoryCategoryRepository } from '@features/categories/data/testing/in-memory-category.repository';
 import { aCategory } from '@features/categories/domain/category-fixture.testing';
-import { TasksStore } from '@features/tasks/state/tasks.store';
-import { FakeTasksStore } from '@features/tasks/state/testing/fake-tasks.store';
+import { FakeCategoryTaskCleanup } from '@features/categories/state/testing/fake-category-task-cleanup';
 
 function setup(initial = [aCategory({ id: 'a', name: 'Work' })]) {
   const repository = new InMemoryCategoryRepository(initial);
@@ -16,18 +17,19 @@ function setup(initial = [aCategory({ id: 'a', name: 'Work' })]) {
   TestBed.configureTestingModule({
     providers: [
       { provide: CategoryRepository, useValue: repository },
-      { provide: TasksStore, useClass: FakeTasksStore },
+      { provide: CategoryTaskCleanup, useClass: FakeCategoryTaskCleanup },
+      ...provideCategoriesState(),
       { provide: ID_GENERATOR, useValue: () => `id-${++nextId}` },
     ],
   });
   return {
     repository,
     store: TestBed.inject(CategoriesStore),
-    tasksStore: TestBed.inject(TasksStore) as unknown as FakeTasksStore,
+    taskCleanup: TestBed.inject(CategoryTaskCleanup) as FakeCategoryTaskCleanup,
   };
 }
 
-describe('CategoriesStore', () => {
+describe('SignalCategoriesStore', () => {
   describe('load', () => {
     it('publishes the persisted categories sorted by name and becomes ready', async () => {
       // Arrange
@@ -130,21 +132,21 @@ describe('CategoriesStore', () => {
       expect(repository.categories).toEqual([]);
     });
 
-    it('sends the tasks of the category to uncategorized', async () => {
+    it('sends the tasks of the category to uncategorized through the cleanup contract', async () => {
       // Arrange
-      const { store, tasksStore } = setup();
+      const { store, taskCleanup } = setup();
       await store.load();
 
       // Act
       await store.remove('a');
 
       // Assert
-      expect(tasksStore.unassignedCategoryIds).toEqual(['a']);
+      expect(taskCleanup.unassignedCategoryIds).toEqual(['a']);
     });
 
     it('rolls back the deletion when persisting it fails, leaving tasks alone', async () => {
       // Arrange
-      const { store, repository, tasksStore } = setup();
+      const { store, repository, taskCleanup } = setup();
       await store.load();
       repository.failNextSaveWith = new Error('boom');
 
@@ -154,14 +156,14 @@ describe('CategoriesStore', () => {
       // Assert
       await expect(result).rejects.toThrow('boom');
       expect(store.categories()).toHaveLength(1);
-      expect(tasksStore.unassignedCategoryIds).toEqual([]);
+      expect(taskCleanup.unassignedCategoryIds).toEqual([]);
     });
 
     it('brings the category back when its tasks cannot be unassigned', async () => {
       // Arrange
-      const { store, repository, tasksStore } = setup();
+      const { store, repository, taskCleanup } = setup();
       await store.load();
-      tasksStore.failNextUnassignWith = new Error('boom');
+      taskCleanup.failNextUnassignWith = new Error('boom');
 
       // Act
       const result = store.remove('a');

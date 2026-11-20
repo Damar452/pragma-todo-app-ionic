@@ -1,5 +1,6 @@
 import { TestBed } from '@angular/core/testing';
 
+import { provideTasksState } from './provide-tasks-state';
 import { TasksStore } from './tasks.store';
 
 import { provideFakeDate } from '@core/date/testing/fake-date.service';
@@ -19,12 +20,13 @@ function setup(initial = [aTask({ id: 'seed' })]) {
       { provide: TaskRepository, useValue: repository },
       { provide: ID_GENERATOR, useValue: () => `id-${++nextId}` },
       ...provideFakeDate(NOW),
+      ...provideTasksState(),
     ],
   });
   return { repository, store: TestBed.inject(TasksStore) };
 }
 
-describe('TasksStore', () => {
+describe('SignalTasksStore', () => {
   describe('load', () => {
     it('starts idle and empty', () => {
       // Arrange / Act

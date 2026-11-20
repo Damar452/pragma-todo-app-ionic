@@ -50,7 +50,7 @@ export class FakeFeedbackService extends FeedbackService {
   }
 }
 
-/** Registers the fake under the real token; `TestBed.inject(FakeFeedbackService)` gives the same instance. */
+/** Binds the fake to the `FeedbackService` contract; `TestBed.inject(FakeFeedbackService)` gives the same instance. */
 export function provideFakeFeedback(): Provider[] {
   return [FakeFeedbackService, { provide: FeedbackService, useExisting: FakeFeedbackService }];
 }

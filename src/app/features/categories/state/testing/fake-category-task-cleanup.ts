@@ -1,14 +1,16 @@
+import { CategoryTaskCleanup } from '@features/categories/state/category-task-cleanup';
+
 /**
- * Stand-in for `TasksStore` in other features' specs (e.g. CategoriesStore),
- * which only need to know that tasks were told to drop a category.
- * Provide it with `{ provide: TasksStore, useClass: FakeTasksStore }`.
+ * Fake `CategoryTaskCleanup` for the categories store spec: records which
+ * categories tasks were told to drop. Provide it with
+ * `{ provide: CategoryTaskCleanup, useClass: FakeCategoryTaskCleanup }`.
  */
-export class FakeTasksStore {
+export class FakeCategoryTaskCleanup extends CategoryTaskCleanup {
   readonly unassignedCategoryIds: string[] = [];
   /** When set, the next `unassignCategory` rejects with it, then the fake recovers. */
   failNextUnassignWith: Error | null = null;
 
-  unassignCategory(categoryId: string): Promise<void> {
+  override unassignCategory(categoryId: string): Promise<void> {
     const failure = this.failNextUnassignWith;
     if (failure) {
       this.failNextUnassignWith = null;

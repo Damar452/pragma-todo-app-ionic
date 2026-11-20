@@ -3,6 +3,7 @@ import { By } from '@angular/platform-browser';
 
 import { CategoryManagerPage } from './category-manager.page';
 
+import { provideFakeDate } from '@core/date/testing/fake-date.service';
 import { ItemAction } from '@core/feedback/feedback.enums';
 import {
   FakeFeedbackService,
@@ -10,6 +11,7 @@ import {
 } from '@core/feedback/testing/fake-feedback.service';
 import { aCategory } from '@features/categories/domain/category-fixture.testing';
 import { CategoriesStore } from '@features/categories/state/categories.store';
+import { CategoryTaskCleanup } from '@features/categories/state/category-task-cleanup';
 import { provideInMemoryCategories } from '@features/categories/state/testing/in-memory-categories.providers';
 import { CategoryListComponent } from '@features/categories/ui/organisms/category-list/category-list.component';
 import { aTask } from '@features/tasks/domain/task-fixture.testing';
@@ -24,7 +26,13 @@ async function setup() {
     aTask({ id: 't2', categoryId: 'c1', completed: true }),
   ]);
   TestBed.configureTestingModule({
-    providers: [...categoryProviders, ...taskProviders, provideFakeFeedback()],
+    providers: [
+      ...categoryProviders,
+      ...taskProviders,
+      { provide: CategoryTaskCleanup, useExisting: TasksStore },
+      provideFakeFeedback(),
+      ...provideFakeDate(),
+    ],
   });
   const categoriesStore = TestBed.inject(CategoriesStore);
   const tasksStore = TestBed.inject(TasksStore);
